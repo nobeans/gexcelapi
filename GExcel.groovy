@@ -23,6 +23,15 @@ class GExcel {
             asInt { delegate.numericCellValue.intValue() }
             asDate { delegate.dateCellValue }
             asBoolean { delegate.booleanCellValue }
+            asString { delegate.stringCellValue }
+            asType { Class type ->
+                switch(type) {
+                    case Integer: return delegate.asInt()
+                    case Boolean: return delegate.asBoolean()
+                    case Date:    return delegate.asDate()
+                    case String:  return delegate.asString()
+                }
+            }
         }
     }
     private static convertRowLabelToNumber(ascii) {
