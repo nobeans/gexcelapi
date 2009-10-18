@@ -25,21 +25,20 @@ class GExcel {
             asBoolean { delegate.booleanCellValue }
         }
     }
-    private static ascii2num(ascii) {
+    private static convertRowLabelToNumber(ascii) {
+        final origin = ('A' as char) as int
+        final radix = 26
         def num = 0
-        ascii.reverse().toUpperCase().toCharArray().eachWithIndex { ch, i ->
-            final maxDelta = 25
-            def deltaFromA = (ch as int) - 65
-            num += deltaFromA * (i*maxDelta)
+        ascii.toUpperCase().reverse().eachWithIndex { ch, i ->
+            def delta = ((ch as char) as int) - origin + 1
+            num += delta * (radix**i)
         }
-        num
+        num - 1 // convert for "index" which starts from 0
     }
     // "A8" -> A -> 0
     private static colIndex(expr) {
         def matcher = (expr =~ /([a-zA-Z]+)([0-9]+)/)
-        println matcher[0][1]
-        println ascii2num(matcher[0][1])
-        ascii2num(matcher[0][1])
+        convertRowLabelToNumber(matcher[0][1])
     }
     // "A8" -> 8 -> 7
     private static rowIndex(expr) {
