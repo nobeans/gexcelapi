@@ -42,6 +42,7 @@ class GExcel {
                     default: throw new RuntimeException("unsupported cell type: ${delegate.cellType}")
                 }
             }
+            toString { delegate.value as String }
         }
     }
     private static convertRowLabelToNumber(ascii) {
