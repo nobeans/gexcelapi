@@ -81,6 +81,13 @@ class GExcelTest extends GroovyTestCase {
 
         assert sheet.A5.value == true
         assert sheet.A6.value == false
+
+        try {
+            sheet.A7.value
+            fail()
+        } catch (Exception e) {
+            assert e.message == "unsupported cell type: 2"
+        }
     }
 
     void testAccessCellsOfSomeTypes_asType() throws Exception {
@@ -103,6 +110,13 @@ class GExcelTest extends GroovyTestCase {
 
         assert (sheet.A5 as Boolean) == true
         assert (sheet.A6 as Boolean) == false
+
+        try {
+            sheet.A1 as List
+            fail()
+        } catch (Exception e) {
+            assert e.message == "unsupported cell type: 1"
+        }
     }
 
     void testToString() throws Exception {
