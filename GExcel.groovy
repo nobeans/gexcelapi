@@ -13,8 +13,8 @@ class GExcel {
         HSSFWorkbook.metaClass.static.load = { InputStream is -> new HSSFWorkbook(new POIFSFileSystem(is)) }
 
         HSSFWorkbook.metaClass.define {
-            getAt { idx -> delegate.getSheetAt(idx) }
-            getProperty { name -> delegate.getSheet(name) }
+            getAt { int idx -> delegate.getSheetAt(idx) }
+            getProperty { String name -> delegate.getSheet(name) }
         }
         HSSFSheet.metaClass.define {
             getProperty { name -> delegate.getRow(rowIndex(name))?.getCell(colIndex(name)) }
