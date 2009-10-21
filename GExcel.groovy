@@ -2,6 +2,7 @@
 import org.apache.poi.hssf.usermodel.*
 import org.apache.poi.poifs.filesystem.*
 import org.apache.poi.ss.usermodel.*
+import static Util.*
 
 class GExcel {
     static { setupMetaClass() }
@@ -44,26 +45,6 @@ class GExcel {
             }
             toString { delegate.value as String }
         }
-    }
-    private static convertRowLabelToNumber(ascii) {
-        final origin = ('A' as char) as int
-        final radix = 26
-        def num = 0
-        ascii.toUpperCase().reverse().eachWithIndex { ch, i ->
-            def delta = ((ch as char) as int) - origin + 1
-            num += delta * (radix**i)
-        }
-        num - 1 // convert for "index" which starts from 0
-    }
-    // "A8" -> A -> 0
-    private static colIndex(expr) {
-        def matcher = (expr =~ /([a-zA-Z]+)([0-9]+)/)
-        convertRowLabelToNumber(matcher[0][1])
-    }
-    // "A8" -> 8 -> 7
-    private static rowIndex(expr) {
-        def matcher = (expr =~ /([a-zA-Z]+)([0-9]+)/)
-        (matcher[0][2] as int) - 1
     }
 
     static load(String file) { load(new File(file)) }
