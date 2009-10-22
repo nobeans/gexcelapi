@@ -1,16 +1,16 @@
 class UtilTest extends GroovyTestCase {
 
-    void testConvertRowLabelToNumber() throws Exception {
-          assert Util.convertRowLabelToNumber('A') == 0
-          assert Util.convertRowLabelToNumber('B') == 1
-          assert Util.convertRowLabelToNumber('C') == 2
-          assert Util.convertRowLabelToNumber('Z') == 25
-          assert Util.convertRowLabelToNumber('AA') == 26
-          assert Util.convertRowLabelToNumber('AB') == 27
-          assert Util.convertRowLabelToNumber('BA') == 52
-          assert Util.convertRowLabelToNumber('BZ') == 77
-          assert Util.convertRowLabelToNumber('ZZ') == 701
-          assert Util.convertRowLabelToNumber('AAA') == 702
+    void testConvertColLabelToNumber() throws Exception {
+          assert Util.convertColLabelToNumber('A') == 0
+          assert Util.convertColLabelToNumber('B') == 1
+          assert Util.convertColLabelToNumber('C') == 2
+          assert Util.convertColLabelToNumber('Z') == 25
+          assert Util.convertColLabelToNumber('AA') == 26
+          assert Util.convertColLabelToNumber('AB') == 27
+          assert Util.convertColLabelToNumber('BA') == 52
+          assert Util.convertColLabelToNumber('BZ') == 77
+          assert Util.convertColLabelToNumber('ZZ') == 701
+          assert Util.convertColLabelToNumber('AAA') == 702
     }
 
     void testParseRowIndex() throws Exception {

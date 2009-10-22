@@ -1,6 +1,6 @@
 class Util {
 
-    private static convertRowLabelToNumber(ascii) {
+    private static convertColLabelToNumber(ascii) {
         final origin = ('A' as char) as int
         final radix = 26
         def num = 0
@@ -14,7 +14,7 @@ class Util {
     // "A8" -> A -> 0
     static colIndex(expr) {
         def matcher = (expr =~ /([a-zA-Z]+)([0-9]+)/)
-        convertRowLabelToNumber(matcher[0][1])
+        convertColLabelToNumber(matcher[0][1])
     }
 
     // "A8" -> 8 -> 7
