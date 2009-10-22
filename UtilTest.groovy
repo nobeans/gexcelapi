@@ -28,4 +28,26 @@ class UtilTest extends GroovyTestCase {
         assert Util.colIndex("AAA88") == 702
     }
 
+    void testConvertNumberToColLabel() throws Exception {
+          assert Util.convertNumberToColLabel(0) == 'A'
+          assert Util.convertNumberToColLabel(1) == 'B'
+          assert Util.convertNumberToColLabel(2) == 'C'
+          assert Util.convertNumberToColLabel(25) == 'Z'
+          assert Util.convertNumberToColLabel(26) == 'AA'
+          assert Util.convertNumberToColLabel(27) == 'AB'
+          assert Util.convertNumberToColLabel(52) == 'BA'
+          assert Util.convertNumberToColLabel(77) == 'BZ'
+          assert Util.convertNumberToColLabel(701) == 'ZZ'
+          assert Util.convertNumberToColLabel(702) == 'AAA'
+    }
+
+    void testCellLabel() throws Exception {
+        assert Util.cellLabel(2, 0) == "A3"
+        assert Util.cellLabel(3, 1) == "B4"
+        assert Util.cellLabel(4, 25) == "Z5"
+        assert Util.cellLabel(80, 26) == "AA81"
+        assert Util.cellLabel(81, 701) == "ZZ82"
+        assert Util.cellLabel(82, 702) == "AAA83"
+    }
+
 }
