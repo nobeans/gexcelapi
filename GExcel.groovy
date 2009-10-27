@@ -8,11 +8,6 @@ class GExcel {
     static { setupMetaClass() }
 
     private static setupMetaClass() {
-        // maybe cannot use "define" for static methods
-        HSSFWorkbook.metaClass.static.load = { String file -> load(new File(file)) }
-        HSSFWorkbook.metaClass.static.load = { File file -> load(new FileInputStream(file)) }
-        HSSFWorkbook.metaClass.static.load = { InputStream is -> new HSSFWorkbook(new POIFSFileSystem(is)) }
-
         HSSFWorkbook.metaClass.define {
             getAt { int idx -> delegate.getSheetAt(idx) }
             getProperty { String name -> delegate.getSheet(name) }
@@ -51,3 +46,4 @@ class GExcel {
     static load(File file) { load(new FileInputStream(file)) }
     static load(InputStream is) { new HSSFWorkbook(new POIFSFileSystem(is)) }
 }
+
