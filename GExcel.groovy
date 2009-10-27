@@ -3,6 +3,7 @@ import org.apache.poi.hssf.usermodel.*
 import org.apache.poi.poifs.filesystem.*
 import org.apache.poi.ss.usermodel.*
 import static Util.*
+import java.lang.IndexOutOfBoundsException as IOOBEx
 
 class GExcel {
     static { setupMetaClass() }
@@ -16,17 +17,13 @@ class GExcel {
             getProperty { name ->
                 if (name == "rows") return rows()
                 if (name ==~ /_\d+/) return delegate.getRow(rowIndex(name))
-                try {
-                    delegate.getRow(rowIndex(name))?.getCell(colIndex(name))
-                } catch (IndexOutOfBoundsException e) {
-                    return null
+                if (name ==~ /[a-zA-Z]+\d+/) {
+                    try { delegate.getRow(rowIndex(name))?.getCell(colIndex(name)) } catch (IOOBEx e) { return null }
                 }
             }
             setProperty { name, value ->
-                try {
-                    delegate.getRow(rowIndex(name))?.getCell(colIndex(name)).setCellValue(value)
-                } catch (IndexOutOfBoundsException e) {
-                    return null
+                if (name ==~ /[a-zA-Z]+\d+/) {
+                    try { delegate.getRow(rowIndex(name))?.getCell(colIndex(name)).setCellValue(value) } catch (IOOBEx e) { return null }
                 }
             }
             rows { continueCondition = {true} ->
