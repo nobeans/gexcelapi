@@ -97,10 +97,31 @@ class GExcelTest extends GroovyTestCase {
     }
 
     void testRows() throws Exception {
-        def row1 = sheet.rows[0]
-        assert row1[0].value == "Sheet1-A1" // A1
-        assert row1[1].value == "B1の内容" // B1
+        def rows = sheet.rows
+        assert (rows[0].getCell(0) as String) == "Sheet1-A1"
+        assert (rows[1].getCell(0) as String)  == "あいうえお"
+        assert (rows[2].getCell(0) as Double) == 1234.0
+        assert (rows[3].getCell(0) as Date) as String == "Thu Oct 22 00:00:00 JST 2009"
+        assert (rows[4].getCell(0) as Boolean) == true
+        assert (rows[5].getCell(0) as Boolean) == false
+        assert  rows[6].getCell(0).cellFormula == "1+1"
+        assert rows.size() == 7
+        assert sheet.rows == sheet.rows() // both like property access and like method call
     }
+
+//    void testRowWildcard() throws Exception {
+//        def row1 = sheet.rows[0]
+//        assert sheet._1 == row1
+//
+//        assert row1.A_.value == "Sheet1-A1" // A1
+//        assert row1.B_.value == "B1の内容" // B1
+//    }
+
+//    void testIterateOfRows() throws Exception {
+//        sheet.rows { row -> row.A_.value != "" }.each { row ->
+//            println row.A_.value + ":" + row.B_.value
+//        }
+//    }
 
 //    void testCols() throws Exception {
 //        def colA = sheet.cols[0]
@@ -114,12 +135,6 @@ class GExcelTest extends GroovyTestCase {
 //
 //        def colA = sheet.cols[0]
 //        assert sheet.A_  == colA
-//    }
-//
-//    void testIterateOfRows() throws Exception {
-//        sheet.rows { row -> row._1.value != "" }.each { row ->
-//            println row._1.value + ":" + row._2.value
-//        }
 //    }
 //
 //    void testIterateOfCols() throws Exception {
