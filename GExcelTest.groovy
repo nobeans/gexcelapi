@@ -1,7 +1,13 @@
 class GExcelTest extends GroovyTestCase {
 
+    def book, sheet
+    void setUp() throws Exception {
+        book = GExcel.load("sample.xls")
+        sheet = book[0]
+    }
+
     void testLoad() throws Exception {
-        assert GExcel.load("./sample.xls")
+        assert GExcel.load("sample.xls")
         assert GExcel.load(new File("sample.xls"))
         new File("sample.xls").withInputStream { is ->
             assert GExcel.load(is)
@@ -9,8 +15,6 @@ class GExcelTest extends GroovyTestCase {
     }
 
     void testAccessSheet() throws Exception {
-        def book = GExcel.load("sample.xls")
-        def sheet = book[0]
         assert sheet != book[1]
 
         def sheet3 = book.Sheet3 // by sheet name
@@ -19,8 +23,6 @@ class GExcelTest extends GroovyTestCase {
     }
 
     void testAccessCellValue() throws Exception {
-        def book = GExcel.load("sample.xls")
-        def sheet = book[0]
         assert sheet["A1"].value == "Sheet1-A1"
  
         assert sheet.A1.value == "Sheet1-A1"
@@ -34,9 +36,6 @@ class GExcelTest extends GroovyTestCase {
     }
 
     void testAccessCellsOfSomeTypes() throws Exception {
-        def book = GExcel.load("sample.xls")
-        def sheet = book[0]
-
         assert sheet.A1.value == "Sheet1-A1"
         assert sheet.A1.value in String
 
@@ -63,9 +62,6 @@ class GExcelTest extends GroovyTestCase {
     }
 
     void testAccessCellsOfSomeTypes_asType() throws Exception {
-        def book = GExcel.load("sample.xls")
-        def sheet = book[0]
-
         assert (sheet.A1 as String) == "Sheet1-A1"
         assert (sheet.A1 as String) in String
 
@@ -92,9 +88,6 @@ class GExcelTest extends GroovyTestCase {
     }
 
     void testToString() throws Exception {
-        def book = GExcel.load("sample.xls")
-        def sheet = book[0]
-
         assert sheet.A1.toString() == "Sheet1-A1"
         assert sheet.A2.toString() == "あいうえお"
         assert sheet.A3.toString() == "1234.0"
