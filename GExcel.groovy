@@ -13,8 +13,32 @@ class GExcel {
             getProperty { String name -> delegate.getSheet(name) }
         }
         HSSFSheet.metaClass.define {
-            getProperty { name -> delegate.getRow(rowIndex(name))?.getCell(colIndex(name)) }
-            setProperty { name, value -> delegate.getRow(rowIndex(name))?.getCell(colIndex(name)).setCellValue(value) }
+            getProperty { name ->
+                if (name == "rows") return rows()
+                try {
+                    delegate.getRow(rowIndex(name))?.getCell(colIndex(name))
+                } catch (IndexOutOfBoundsException e) {
+                    return null
+                }
+            }
+            setProperty { name, value ->
+                try {
+                    delegate.getRow(rowIndex(name))?.getCell(colIndex(name)).setCellValue(value)
+                } catch (IndexOutOfBoundsException e) {
+                    return null
+                }
+            }
+            rows { continueCondition = {true} ->
+                def rows = []
+                for (def row : delegate) {
+                    if (!continueCondition.call(row)) break
+                    rows << row
+                }
+                rows
+            }
+        }
+        HSSFRow.metaClass.define {
+            getAt { int idx -> delegate.getCell(idx) }
         }
         HSSFCell.metaClass.define {
             getValue {
