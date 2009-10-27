@@ -28,13 +28,13 @@ class Util {
 
     // "A8" -> A -> 0
     static colIndex(cellLabel) {
-        def matcher = (cellLabel =~ /([a-zA-Z]+)([0-9]+)/)
+        def matcher = (cellLabel =~ /([a-zA-Z]+)(_|[0-9]+)/)
         convertColLabelToNumber(matcher[0][1])
     }
 
     // "A8" -> 8 -> 7
     static rowIndex(cellLabel) {
-        def matcher = (cellLabel =~ /([a-zA-Z]+)([0-9]+)/)
+        def matcher = (cellLabel =~ /(_|[a-zA-Z]+)([0-9]+)/)
         (matcher[0][2] as int) - 1
     }
 

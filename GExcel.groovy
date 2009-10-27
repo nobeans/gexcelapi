@@ -15,6 +15,7 @@ class GExcel {
         HSSFSheet.metaClass.define {
             getProperty { name ->
                 if (name == "rows") return rows()
+                if (name ==~ /_\d+/) return delegate.getRow(rowIndex(name))
                 try {
                     delegate.getRow(rowIndex(name))?.getCell(colIndex(name))
                 } catch (IndexOutOfBoundsException e) {
@@ -39,6 +40,10 @@ class GExcel {
         }
         HSSFRow.metaClass.define {
             getAt { int idx -> delegate.getCell(idx) }
+            getProperty { name ->
+                if (name ==~ /[a-zA-Z]+_/) return delegate.getCell(colIndex(name))
+                null
+            }
         }
         HSSFCell.metaClass.define {
             getValue {

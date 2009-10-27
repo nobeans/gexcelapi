@@ -17,6 +17,7 @@ class UtilTest extends GroovyTestCase {
         assert Util.rowIndex("A1") == 0
         assert Util.rowIndex("D2") == 1
         assert Util.rowIndex("Z1234") == 1233
+        assert Util.rowIndex("_1234") == 1233 // wildcard
     }
 
     void testParseColIndex() throws Exception {
@@ -26,6 +27,7 @@ class UtilTest extends GroovyTestCase {
         assert Util.colIndex("AA88") == 26
         assert Util.colIndex("ZZ88") == 701
         assert Util.colIndex("AAA88") == 702
+        assert Util.colIndex("AAA_") == 702 // wildcard
     }
 
     void testConvertNumberToColLabel() throws Exception {

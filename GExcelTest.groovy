@@ -109,13 +109,15 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.rows == sheet.rows() // both like property access and like method call
     }
 
-//    void testRowWildcard() throws Exception {
-//        def row1 = sheet.rows[0]
-//        assert sheet._1 == row1
-//
-//        assert row1.A_.value == "Sheet1-A1" // A1
-//        assert row1.B_.value == "B1の内容" // B1
-//    }
+    void testWildcardOfRow() throws Exception {
+        def row1 = sheet.rows[0]
+        assert sheet._1 == row1
+
+        assert row1.A_.value == "Sheet1-A1" // A1
+        assert row1.B_.value == "B1の内容" // B1
+
+        assert sheet._2.A_.value == "あいうえお" // A2
+    }
 
 //    void testIterateOfRows() throws Exception {
 //        sheet.rows { row -> row.A_.value != "" }.each { row ->
