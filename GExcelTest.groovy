@@ -124,11 +124,15 @@ class GExcelTest extends GroovyTestCase {
         assert sheet._2.A_.value == "あいうえお" // A2
     }
 
-//    void testIterateOfRows() throws Exception {
-//        sheet.rows { row -> row.A_.value != "" }.each { row ->
-//            println row.A_.value + ":" + row.B_.value
-//        }
-//    }
+    void testRowsAsCollection() throws Exception {
+        assert (
+            sheet.rows { row ->
+                row.A_.cellType == 1 // only string type
+            }.collect { row ->
+                row.A_.value + "," + row.B_.value
+            }
+        ) == ["Sheet1-A1,B1の内容", "あいうえお,B2の内容"]
+    }
 
 //    void testCols() throws Exception {
 //        def colA = sheet.cols[0]
