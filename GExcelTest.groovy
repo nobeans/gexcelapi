@@ -87,6 +87,15 @@ class GExcelTest extends GroovyTestCase {
         }
     }
 
+    void testInspectCellType() throws Exception {
+        assert sheet.A1.isStringType()
+        assert sheet.A2.isStringType()
+        assert sheet.A3.isNumericType()
+        assert sheet.A4.isNumericType() // wrong: not numeric but date
+        assert sheet.A5.isBooleanType()
+        assert sheet.A6.isBooleanType()
+    }
+
     void testToString() throws Exception {
         assert sheet.A1.toString() == "Sheet1-A1"
         assert sheet.A2.toString() == "あいうえお"
@@ -121,11 +130,7 @@ class GExcelTest extends GroovyTestCase {
 
     void testHowToUseRowIterator() throws Exception {
         assert (
-            sheet.findAll { row ->
-                row.A_.cellType == 1 // only string type
-            }.collect { row ->
-                row.A_.value + "," + row.B_.value
-            }
+            sheet.findAll { row -> row.A_.isStringType() }.collect { row -> row.A_.value + "," + row.B_.value }
         ) == ["Sheet1-A1,B1の内容", "あいうえお,B2の内容"]
     }
 

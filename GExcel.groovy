@@ -36,6 +36,9 @@ class GExcel {
             }
         }
         HSSFCell.metaClass.define {
+            isStringType  { delegate.cellType == Cell.CELL_TYPE_STRING }
+            isNumericType { delegate.cellType == Cell.CELL_TYPE_NUMERIC }
+            isBooleanType { delegate.cellType == Cell.CELL_TYPE_BOOLEAN }
             getValue {
                 // implicitly accessing value by appropriate type
                 switch(delegate.cellType) {
