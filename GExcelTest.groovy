@@ -134,30 +134,6 @@ class GExcelTest extends GroovyTestCase {
         ) == ["Sheet1-A1,B1の内容", "あいうえお,B2の内容"]
     }
 
-//    void testCols() throws Exception {
-//        def colA = sheet.cols[0]
-//        assert colA[0] == "" // A1
-//        assert colA[1] == "" // A2
-//    }
-//
-//    void testWildcard() throws Exception {
-//        def row1 = sheet.rows[0]
-//        assert sheet._1 == row1
-//
-//        def colA = sheet.cols[0]
-//        assert sheet.A_  == colA
-//    }
-//
-//    void testIterateOfCols() throws Exception {
-//        def row1 = sheet.rows[0]
-////        def row1 = sheet._1
-////        def row1 = sheet.A_
-//
-//        row1.cells { cell -> cell.value != "" }.each { cell ->
-//            println cell.value + ":" + cell.value
-//        }
-//    }
-
     //void testRange() throws Exception {
     //    def book = GExcel.load("sample.xls")
     //    def sheet = book[0]
