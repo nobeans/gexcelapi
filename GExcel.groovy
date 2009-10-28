@@ -26,14 +26,7 @@ class GExcel {
                     try { delegate.getRow(rowIndex(name))?.getCell(colIndex(name)).setCellValue(value) } catch (IOOBEx e) { return null }
                 }
             }
-            rows { continueCondition = {true} ->
-                def rows = []
-                for (def row : delegate) {
-                    if (!continueCondition.call(row)) break
-                    rows << row
-                }
-                rows
-            }
+            rows { delegate?.findAll{true} }
         }
         HSSFRow.metaClass.define {
             getAt { int idx -> delegate.getCell(idx) }
@@ -55,6 +48,7 @@ class GExcel {
             setValue { value -> delegate.setCellValue(value) }
             leftShift { value -> delegate.setCellValue(value) }
             asType { Class type ->
+                // explicitly accessing value by appropriate type
                 switch(type) {
                     case Double:  return delegate.numericCellValue
                     case Integer: return delegate.numericCellValue.intValue()

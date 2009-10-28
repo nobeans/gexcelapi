@@ -98,35 +98,30 @@ class GExcelTest extends GroovyTestCase {
 
     void testRows() throws Exception {
         def rows = sheet.rows
-        assert (rows[0].getCell(0) as String) == "Sheet1-A1"
-        assert (rows[1].getCell(0) as String)  == "あいうえお"
-        assert (rows[2].getCell(0) as Double) == 1234.0
-        assert (rows[3].getCell(0) as Date) as String == "Thu Oct 22 00:00:00 JST 2009"
-        assert (rows[4].getCell(0) as Boolean) == true
-        assert (rows[5].getCell(0) as Boolean) == false
-        assert  rows[6].getCell(0).cellFormula == "1+1"
+        assert rows[0] == sheet.getRow(0)
+        assert rows[1] == sheet.getRow(1)
+        assert rows[2] == sheet.getRow(2)
+        assert rows[3] == sheet.getRow(3)
+        assert rows[4] == sheet.getRow(4)
+        assert rows[5] == sheet.getRow(5)
+        assert rows[6] == sheet.getRow(6)
         assert rows.size() == 7
+
         assert sheet.rows == sheet.rows() // both like property access and like method call
     }
 
-    void testRowsWithCondition() throws Exception {
-        def rows = sheet.rows { row -> row.getCell(0).cellType == 1 } // only string type
-        assert (rows[0].getCell(0) as String) == "Sheet1-A1"
-        assert (rows[1].getCell(0) as String)  == "あいうえお"
-        assert rows.size() == 2
-    }
+    void testWildcardOfRowAndCell() throws Exception {
+        assert sheet._1 == sheet.getRow(0)
+        assert sheet._1.A_.value == "Sheet1-A1" // A1
+        assert sheet._1.B_.value == "B1の内容" // B1
 
-    void testWildcardOfRow() throws Exception {
-        def row1 = sheet.rows[0]
-        assert sheet._1 == row1
-        assert row1.A_.value == "Sheet1-A1" // A1
-        assert row1.B_.value == "B1の内容" // B1
+        assert sheet._2 == sheet.getRow(1)
         assert sheet._2.A_.value == "あいうえお" // A2
     }
 
-    void testRowsAsCollection() throws Exception {
+    void testHowToUseRowIterator() throws Exception {
         assert (
-            sheet.rows { row ->
+            sheet.findAll { row ->
                 row.A_.cellType == 1 // only string type
             }.collect { row ->
                 row.A_.value + "," + row.B_.value
