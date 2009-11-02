@@ -1,3 +1,5 @@
+package org.jggug.commons.gexcelapi
+
 class Util {
 
     private static final int ORIGIN = ('A' as char) as int

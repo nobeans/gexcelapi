@@ -1,4 +1,5 @@
-@Grab(group='org.apache.poi', module='poi', version='3.5-beta3')
+package org.jggug.commons.gexcelapi
+
 import org.apache.poi.hssf.usermodel.*
 import org.apache.poi.poifs.filesystem.*
 import org.apache.poi.ss.usermodel.*

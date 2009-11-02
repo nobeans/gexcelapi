@@ -1,3 +1,5 @@
+package org.jggug.commons.gexcelapi
+
 class UtilTest extends GroovyTestCase {
 
     void testConvertColLabelToNumber() throws Exception {

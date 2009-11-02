@@ -1,15 +1,19 @@
+package org.jggug.commons.gexcelapi
+
 class GExcelTest extends GroovyTestCase {
+
+    def sampleFile = "build/classes/test/sample.xls"
 
     def book, sheet
     void setUp() throws Exception {
-        book = GExcel.load("sample.xls")
+        book = GExcel.load(sampleFile)
         sheet = book[0]
     }
 
     void testLoad() throws Exception {
-        assert GExcel.load("sample.xls")
-        assert GExcel.load(new File("sample.xls"))
-        new File("sample.xls").withInputStream { is ->
+        assert GExcel.load(sampleFile)
+        assert GExcel.load(new File(sampleFile))
+        new File(sampleFile).withInputStream { is ->
             assert GExcel.load(is)
         }
     }
@@ -135,7 +139,7 @@ class GExcelTest extends GroovyTestCase {
     }
 
     //void testRange() throws Exception {
-    //    def book = GExcel.load("sample.xls")
+    //    def book = GExcel.load(sampleFile)
     //    def sheet = book[0]
     //    assert sheet[A1..B5]
     //    sheet[A1..B5].filledBy 0
