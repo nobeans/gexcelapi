@@ -3,7 +3,7 @@ package org.jggug.commons.gexcelapi
 import org.apache.poi.hssf.usermodel.*
 import org.apache.poi.poifs.filesystem.*
 import org.apache.poi.ss.usermodel.*
-import static Util.*
+import static org.jggug.commons.gexcelapi.Util.*
 import java.lang.IndexOutOfBoundsException as IOOBEx
 
 class GExcel {
