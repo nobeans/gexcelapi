@@ -137,12 +137,4 @@ class GExcelTest extends GroovyTestCase {
             sheet.findAll { row -> row.A_.isStringType() }.collect { row -> row.A_.value + "," + row.B_.value }
         ) == ["Sheet1-A1,B1の内容", "あいうえお,B2の内容"]
     }
-
-    //void testRange() throws Exception {
-    //    def book = GExcel.open(sampleFile)
-    //    def sheet = book[0]
-    //    assert sheet[A1..B5]
-    //    sheet[A1..B5].filledBy 0
-    //    assert sheet[A1..B5]
-    //}
 }
