@@ -5,12 +5,12 @@ class GExcelTest extends GroovyTestCase {
     def sampleFile = "build/classes/test/sample.xls"
 
     def book, sheet
-    void setUp() throws Exception {
+    void setUp() {
         book = GExcel.open(sampleFile)
         sheet = book[0]
     }
 
-    void testOpen() throws Exception {
+    void testOpen() {
         assert GExcel.open(sampleFile)
         assert GExcel.open(new File(sampleFile))
         new File(sampleFile).withInputStream { is ->
@@ -18,7 +18,7 @@ class GExcelTest extends GroovyTestCase {
         }
     }
 
-    void testAccessSheet() throws Exception {
+    void testAccessSheet() {
         assert sheet != book[1]
 
         def sheet3 = book.Sheet3 // by sheet name
@@ -26,7 +26,7 @@ class GExcelTest extends GroovyTestCase {
         assert sheet3 == book["Sheet3"]
     }
 
-    void testAccessCellValue() throws Exception {
+    void testAccessCellValue() {
         assert sheet["A1"].value == "Sheet1-A1"
  
         assert sheet.A1.value == "Sheet1-A1"
@@ -39,7 +39,7 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.B2.value == "B2の内容"
     }
 
-    void testAccessCellsOfSomeTypes() throws Exception {
+    void testAccessCellsOfSomeTypes() {
         assert sheet.A1.value == "Sheet1-A1"
         assert sheet.A1.value in String
 
@@ -65,7 +65,7 @@ class GExcelTest extends GroovyTestCase {
         }
     }
 
-    void testAccessCellsOfSomeTypes_asType() throws Exception {
+    void testAccessCellsOfSomeTypes_asType() {
         assert (sheet.A1 as String) == "Sheet1-A1"
         assert (sheet.A1 as String) in String
 
@@ -91,7 +91,7 @@ class GExcelTest extends GroovyTestCase {
         }
     }
 
-    void testInspectCellType() throws Exception {
+    void testInspectCellType() {
         assert sheet.A1.isStringType()
         assert sheet.A2.isStringType()
         assert sheet.A3.isNumericType()
@@ -100,7 +100,7 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A6.isBooleanType()
     }
 
-    void testToString() throws Exception {
+    void testToString() {
         assert sheet.A1.toString() == "Sheet1-A1"
         assert sheet.A2.toString() == "あいうえお"
         assert sheet.A3.toString() == "1234.0"
@@ -109,7 +109,7 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A6.toString() == "FALSE"
     }
 
-    void testRows() throws Exception {
+    void testRows() {
         def rows = sheet.rows
         assert rows[0] == sheet.getRow(0)
         assert rows[1] == sheet.getRow(1)
@@ -123,7 +123,7 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.rows == sheet.rows() // both like property access and like method call
     }
 
-    void testWildcardOfRowAndCell() throws Exception {
+    void testWildcardOfRowAndCell() {
         assert sheet._1 == sheet.getRow(0)
         assert sheet._1.A_.value == "Sheet1-A1" // A1
         assert sheet._1.B_.value == "B1の内容" // B1
@@ -132,7 +132,7 @@ class GExcelTest extends GroovyTestCase {
         assert sheet._2.A_.value == "あいうえお" // A2
     }
 
-    void testHowToUseRowIterator() throws Exception {
+    void testHowToUseRowIterator() {
         assert (
             sheet.findAll { row -> row.A_.isStringType() }.collect { row -> row.A_.value + "," + row.B_.value }
         ) == ["Sheet1-A1,B1の内容", "あいうえお,B2の内容"]

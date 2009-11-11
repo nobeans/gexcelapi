@@ -2,7 +2,7 @@ package org.jggug.commons.gexcelapi
 
 class UtilTest extends GroovyTestCase {
 
-    void testConvertColLabelToNumber() throws Exception {
+    void testConvertColLabelToNumber() {
           assert Util.convertColLabelToNumber('A') == 0
           assert Util.convertColLabelToNumber('B') == 1
           assert Util.convertColLabelToNumber('C') == 2
@@ -15,14 +15,14 @@ class UtilTest extends GroovyTestCase {
           assert Util.convertColLabelToNumber('AAA') == 702
     }
 
-    void testParseRowIndex() throws Exception {
+    void testParseRowIndex() {
         assert Util.rowIndex("A1") == 0
         assert Util.rowIndex("D2") == 1
         assert Util.rowIndex("Z1234") == 1233
         assert Util.rowIndex("_1234") == 1233 // wildcard
     }
 
-    void testParseColIndex() throws Exception {
+    void testParseColIndex() {
         assert Util.colIndex("A2") == 0
         assert Util.colIndex("B2") == 1
         assert Util.colIndex("Z2") == 25
@@ -32,7 +32,7 @@ class UtilTest extends GroovyTestCase {
         assert Util.colIndex("AAA_") == 702 // wildcard
     }
 
-    void testConvertNumberToColLabel() throws Exception {
+    void testConvertNumberToColLabel() {
           assert Util.convertNumberToColLabel(0) == 'A'
           assert Util.convertNumberToColLabel(1) == 'B'
           assert Util.convertNumberToColLabel(2) == 'C'
@@ -45,7 +45,7 @@ class UtilTest extends GroovyTestCase {
           assert Util.convertNumberToColLabel(702) == 'AAA'
     }
 
-    void testCellLabel() throws Exception {
+    void testCellLabel() {
         assert Util.cellLabel(2, 0) == "A3"
         assert Util.cellLabel(3, 1) == "B4"
         assert Util.cellLabel(4, 25) == "Z5"
