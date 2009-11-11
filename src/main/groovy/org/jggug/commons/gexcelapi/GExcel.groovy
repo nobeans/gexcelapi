@@ -63,7 +63,10 @@ class GExcel {
                 }
             }
             toString { delegate.value as String }
+            addValidator { Closure validator -> validators << validator }
+            validate { validators.every { validator -> validator.call(delegate) } }
         }
+        HSSFCell.metaClass.validators = []
     }
 
     static open(String file) { open(new File(file)) }

@@ -137,4 +137,19 @@ class GExcelTest extends GroovyTestCase {
             sheet.findAll { row -> row.A_.isStringType() }.collect { row -> row.A_.value + "," + row.B_.value }
         ) == ["Sheet1-A1,B1の内容", "あいうえお,B2の内容"]
     }
+
+    void testValidationOfCell() {
+        sheet.A1.validators << { it.value == "Sheet1-A1" }
+        sheet.A1.addValidator { it.value in String }
+        assert sheet.A1.validate()
+        assert sheet.A1.validators.size() == 2
+
+        sheet.A1.validators << { it.value in Integer } // wrong
+        assert sheet.A1.validate() == false
+        assert sheet.A1.validators.size() == 3
+
+        sheet.A1.validators << { it.value in String } // not only last validator
+        assert sheet.A1.validate() == false
+        assert sheet.A1.validators.size() == 4
+    }
 }
