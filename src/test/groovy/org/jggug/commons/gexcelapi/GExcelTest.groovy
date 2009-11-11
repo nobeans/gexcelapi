@@ -10,6 +10,11 @@ class GExcelTest extends GroovyTestCase {
         sheet = book[0]
     }
 
+    void tearDown() {
+        book = null
+        sheet = null
+    }
+
     void testOpen() {
         assert GExcel.open(sampleFile)
         assert GExcel.open(new File(sampleFile))
@@ -140,7 +145,10 @@ class GExcelTest extends GroovyTestCase {
 
     void testValidationOfCell() {
         sheet.A1.validators << { it.value == "Sheet1-A1" }
-        sheet.A1.addValidator { it.value in String }
+        assert sheet.A1.validate()
+        assert sheet.A1.validators.size() == 1
+
+        sheet.A1.addValidator { it.value in String } // add
         assert sheet.A1.validate()
         assert sheet.A1.validators.size() == 2
 
@@ -148,8 +156,26 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A1.validate() == false
         assert sheet.A1.validators.size() == 3
 
-        sheet.A1.validators << { it.value in String } // not only last validator
-        assert sheet.A1.validate() == false
-        assert sheet.A1.validators.size() == 4
+        sheet.A1.validator = { it.value == "Sheet1-A1" }
+        assert sheet.A1.validate()
+        assert sheet.A1.validators.size() == 1
+
+        sheet.A1.setValidator { it.value in String } // setter
+        assert sheet.A1.validate()
+        assert sheet.A1.validators.size() == 1
+    }
+
+    void testValidationOfRowAndSheet() {
+        sheet.A1.validators << { it.value == "Sheet1-A1" }
+        sheet.B1.validators << { it.value == "B1の内容" }
+        assert sheet.A1.validate()
+        assert sheet.B1.validate()
+        assert sheet._1.validate() // row
+        assert sheet.validate()    // sheet
+
+        sheet.B1.validators << { false } // force invalid
+        assert sheet.B1.validate() == false
+        assert sheet._1.validate() == false // recursive
+        assert sheet.validate() == false    // recursive
     }
 }

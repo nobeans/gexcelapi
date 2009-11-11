@@ -28,6 +28,7 @@ class GExcel {
                 }
             }
             rows { delegate?.findAll{true} }
+            validate { delegate.rows.every { row -> row.validate() } }
         }
         HSSFRow.metaClass.define {
             getAt { int idx -> delegate.getCell(idx) }
@@ -35,7 +36,10 @@ class GExcel {
                 if (name ==~ /[a-zA-Z]+_/) return delegate.getCell(colIndex(name))
                 null
             }
+            validate { delegate.every { cell -> cell.validate() } }
         }
+
+        HSSFCell.metaClass.__validators__ = null
         HSSFCell.metaClass.define {
             isStringType  { delegate.cellType == Cell.CELL_TYPE_STRING }
             isNumericType { delegate.cellType == Cell.CELL_TYPE_NUMERIC }
@@ -63,10 +67,24 @@ class GExcel {
                 }
             }
             toString { delegate.value as String }
-            addValidator { Closure validator -> validators << validator }
-            validate { validators.every { validator -> validator.call(delegate) } }
+            clearValidators {
+                delegate.__validators__ = []
+            }
+            getValidators {
+                if (delegate.__validators__ == null) { delegate.clearValidators() }
+                delegate.__validators__
+            }
+            addValidator { Closure validator ->
+                delegate.validators << validator
+            }
+            setValidator { Closure validator ->
+                delegate.clearValidators()
+                delegate.validators << validator
+            }
+            validate {
+                delegate.validators.every { validator -> validator.call(delegate) }
+            }
         }
-        HSSFCell.metaClass.validators = []
     }
 
     static open(String file) { open(new File(file)) }
