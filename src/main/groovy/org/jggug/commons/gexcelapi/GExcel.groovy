@@ -7,13 +7,19 @@ import static org.jggug.commons.gexcelapi.Util.*
 import java.lang.IndexOutOfBoundsException as IOOBEx
 
 class GExcel {
-    static { setupMetaClass() }
-
-    private static setupMetaClass() {
+    static {
+        expandHSSFWorkbook()
+        expandHSSFSheet()
+        expandHSSFRow()
+        expandHSSFCell()
+    }
+    private static expandHSSFWorkbook() {
         HSSFWorkbook.metaClass.define {
             getAt { int idx -> delegate.getSheetAt(idx) }
             getProperty { String name -> delegate.getSheet(name) }
         }
+    }
+    private static expandHSSFSheet() {
         HSSFSheet.metaClass.define {
             getProperty { name ->
                 if (name == "rows") return rows()
@@ -30,6 +36,8 @@ class GExcel {
             rows { delegate?.findAll{true} }
             validate { delegate.rows.every { row -> row.validate() } }
         }
+    }
+    private static expandHSSFRow() {
         HSSFRow.metaClass.define {
             getAt { int idx -> delegate.getCell(idx) }
             getProperty { name ->
@@ -38,7 +46,8 @@ class GExcel {
             }
             validate { delegate.every { cell -> cell.validate() } }
         }
-
+    }
+    private static expandHSSFCell() {
         HSSFCell.metaClass.__validators__ = null
         HSSFCell.metaClass.define {
             isStringType  { delegate.cellType == Cell.CELL_TYPE_STRING }
