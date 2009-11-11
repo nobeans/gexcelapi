@@ -66,8 +66,8 @@ class GExcel {
         }
     }
 
-    static load(String file) { load(new File(file)) }
-    static load(File file) { load(new FileInputStream(file)) }
-    static load(InputStream is) { new HSSFWorkbook(new POIFSFileSystem(is)) }
+    static open(String file) { open(new File(file)) }
+    static open(File file) { open(new FileInputStream(file)) }
+    static open(InputStream is) { new HSSFWorkbook(new POIFSFileSystem(is)) }
 }
 

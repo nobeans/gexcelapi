@@ -6,15 +6,15 @@ class GExcelTest extends GroovyTestCase {
 
     def book, sheet
     void setUp() throws Exception {
-        book = GExcel.load(sampleFile)
+        book = GExcel.open(sampleFile)
         sheet = book[0]
     }
 
-    void testLoad() throws Exception {
-        assert GExcel.load(sampleFile)
-        assert GExcel.load(new File(sampleFile))
+    void testOpen() throws Exception {
+        assert GExcel.open(sampleFile)
+        assert GExcel.open(new File(sampleFile))
         new File(sampleFile).withInputStream { is ->
-            assert GExcel.load(is)
+            assert GExcel.open(is)
         }
     }
 
@@ -139,7 +139,7 @@ class GExcelTest extends GroovyTestCase {
     }
 
     //void testRange() throws Exception {
-    //    def book = GExcel.load(sampleFile)
+    //    def book = GExcel.open(sampleFile)
     //    def sheet = book[0]
     //    assert sheet[A1..B5]
     //    sheet[A1..B5].filledBy 0
