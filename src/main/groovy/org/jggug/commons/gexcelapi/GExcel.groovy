@@ -7,26 +7,34 @@ import static org.jggug.commons.gexcelapi.Util.*
 import java.lang.IndexOutOfBoundsException as IOOBEx
 
 class GExcel {
+
     static {
         expandHSSFWorkbook()
         expandHSSFSheet()
         expandHSSFRow()
         expandHSSFCell()
     }
+
     private static expandHSSFWorkbook() {
         HSSFWorkbook.metaClass.define {
             getAt { int idx -> delegate.getSheetAt(idx) }
             getProperty { String name -> delegate.getSheet(name) }
         }
     }
+
     private static expandHSSFSheet() {
-        HSSFSheet.metaClass.define {
+        def methods = {
             getProperty { name ->
-                if (name == "rows") return rows()
-                if (name ==~ /_\d+/) return delegate.getRow(rowIndex(name))
+                if (name == "rows") { return rows() }
+                if (name ==~ /_\d+/) { return delegate.getRow(rowIndex(name)) }
                 if (name ==~ /[a-zA-Z]+\d+/) {
-                    try { delegate.getRow(rowIndex(name))?.getCell(colIndex(name)) } catch (IOOBEx e) { return null }
+                    try { return delegate.getRow(rowIndex(name))?.getCell(colIndex(name)) } catch (IOOBEx e) { return null }
                 }
+                if (name ==~ /([a-zA-Z]+\d+)_([a-zA-Z]+\d+)/) {
+                    def token = name.split("_")
+                    return new CellRange(delegate, token[0], token[1])
+                }
+                null
             }
             setProperty { name, value ->
                 if (name ==~ /[a-zA-Z]+\d+/) {
@@ -36,17 +44,21 @@ class GExcel {
             rows { delegate?.findAll{true} }
             validate { delegate.rows.every { row -> row.validate() } }
         }
+        HSSFSheet.metaClass.define methods
     }
+
     private static expandHSSFRow() {
-        HSSFRow.metaClass.define {
+        def methods = {
             getAt { int idx -> delegate.getCell(idx) }
             getProperty { name ->
-                if (name ==~ /[a-zA-Z]+_/) return delegate.getCell(colIndex(name))
+                if (name ==~ /[a-zA-Z]+_/) { return delegate.getCell(colIndex(name)) }
                 null
             }
             validate { delegate.every { cell -> cell.validate() } }
         }
+        HSSFRow.metaClass.define methods
     }
+
     private static expandHSSFCell() {
         HSSFCell.metaClass.__validators__ = null
         HSSFCell.metaClass.define {
@@ -76,6 +88,7 @@ class GExcel {
                 }
             }
             toString { delegate.value as String }
+            getLabel { Util.cellLabel(delegate.rowIndex, delegate.columnIndex) }
             clearValidators {
                 delegate.__validators__ = []
             }

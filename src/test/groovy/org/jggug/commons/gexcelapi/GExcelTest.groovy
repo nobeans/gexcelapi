@@ -110,8 +110,8 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A2.toString() == "あいうえお"
         assert sheet.A3.toString() == "1234.0"
         assert sheet.A4.toString() == "40108.0" // Date is not assigned any cell type
-        assert sheet.A5.toString() == "TRUE"
-        assert sheet.A6.toString() == "FALSE"
+        assert sheet.A5.toString() == "true"
+        assert sheet.A6.toString() == "false"
     }
 
     void testRows() {
@@ -178,4 +178,14 @@ class GExcelTest extends GroovyTestCase {
         assert sheet._1.validate() == false // recursive
         assert sheet.validate() == false    // recursive
     }
+
+    void testCellRange() {
+        assert sheet.A1_B2.collect { it?.value } == ["Sheet1-A1", "あいうえお", "B1の内容", "B2の内容"]
+        assert sheet.A1_B3.collect { it?.value } == ["Sheet1-A1", "あいうえお", 1234.0, "B1の内容", "B2の内容", null]
+
+        assert sheet.A2_B3.each { it?.value = "X" }
+        assert sheet.A1_B3.collect { it?.value } == ["Sheet1-A1", "X", "X", "B1の内容", "X", null] // cannot apply a value to a null cell
+    }
+
 }
+
