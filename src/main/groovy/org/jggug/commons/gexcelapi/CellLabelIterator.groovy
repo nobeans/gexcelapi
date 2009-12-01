@@ -1,5 +1,7 @@
 package org.jggug.commons.gexcelapi
 
+import org.jggug.commons.gexcelapi.CellLabelUtils as CLU
+
 class CellLabelIterator implements Iterator<String> {
 
     private final int beginRow
@@ -20,10 +22,10 @@ class CellLabelIterator implements Iterator<String> {
 
     CellLabelIterator(beginLabel, endLabel) {
         this(
-            Util.rowIndex(beginLabel), 
-            Util.colIndex(beginLabel),
-            Util.rowIndex(endLabel), 
-            Util.colIndex(endLabel)
+            CLU.rowIndex(beginLabel), 
+            CLU.colIndex(beginLabel),
+            CLU.rowIndex(endLabel), 
+            CLU.colIndex(endLabel)
         )
     }
 
@@ -39,7 +41,7 @@ class CellLabelIterator implements Iterator<String> {
             nextColumn++
             nextRow = beginRow
         }
-        return Util.cellLabel(row, column) // if null, return value is null
+        return CLU.cellLabel(row, column) // if null, return value is null
     }
 
     void remove() {

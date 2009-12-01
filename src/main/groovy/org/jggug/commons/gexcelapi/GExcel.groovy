@@ -3,7 +3,7 @@ package org.jggug.commons.gexcelapi
 import org.apache.poi.hssf.usermodel.*
 import org.apache.poi.poifs.filesystem.*
 import org.apache.poi.ss.usermodel.*
-import static org.jggug.commons.gexcelapi.Util.*
+import org.jggug.commons.gexcelapi.CellLabelUtils as CLU
 import java.lang.IndexOutOfBoundsException as IOOBEx
 
 class GExcel {
@@ -26,9 +26,9 @@ class GExcel {
         def methods = {
             getProperty { name ->
                 if (name == "rows") { return rows() }
-                if (name ==~ /_\d+/) { return delegate.getRow(rowIndex(name)) }
+                if (name ==~ /_\d+/) { return delegate.getRow(CLU.rowIndex(name)) }
                 if (name ==~ /[a-zA-Z]+\d+/) {
-                    try { return delegate.getRow(rowIndex(name))?.getCell(colIndex(name)) } catch (IOOBEx e) { return null }
+                    try { return delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.colIndex(name)) } catch (IOOBEx e) { return null }
                 }
                 if (name ==~ /([a-zA-Z]+\d+)_([a-zA-Z]+\d+)/) {
                     def token = name.split("_")
@@ -38,7 +38,7 @@ class GExcel {
             }
             setProperty { name, value ->
                 if (name ==~ /[a-zA-Z]+\d+/) {
-                    try { delegate.getRow(rowIndex(name))?.getCell(colIndex(name)).setCellValue(value) } catch (IOOBEx e) { return null }
+                    try { delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.colIndex(name)).setCellValue(value) } catch (IOOBEx e) { return null }
                 }
             }
             rows { delegate?.findAll{true} }
@@ -51,7 +51,7 @@ class GExcel {
         def methods = {
             getAt { int idx -> delegate.getCell(idx) }
             getProperty { name ->
-                if (name ==~ /[a-zA-Z]+_/) { return delegate.getCell(colIndex(name)) }
+                if (name ==~ /[a-zA-Z]+_/) { return delegate.getCell(CLU.colIndex(name)) }
                 null
             }
             validate { delegate.every { cell -> cell.validate() } }
@@ -88,7 +88,7 @@ class GExcel {
                 }
             }
             toString { delegate.value as String }
-            getLabel { Util.cellLabel(delegate.rowIndex, delegate.columnIndex) }
+            getLabel { CLU.cellLabel(delegate.rowIndex, delegate.columnIndex) }
             clearValidators {
                 delegate.__validators__ = []
             }

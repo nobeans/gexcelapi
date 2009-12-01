@@ -1,6 +1,6 @@
 package org.jggug.commons.gexcelapi
 
-class Util {
+class CellLabelUtils {
 
     private static final int ORIGIN = ('A' as char) as int
     private static final int RADIX = 26
