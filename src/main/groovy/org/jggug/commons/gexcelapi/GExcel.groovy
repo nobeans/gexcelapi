@@ -27,6 +27,10 @@ class GExcel {
             getProperty { name ->
                 if (name == "rows") { return rows() }
                 if (name ==~ /_\d+/) { return delegate.getRow(CLU.rowIndex(name)) }
+                if (name ==~ /[a-zA-Z]+_/) {
+                    int columnIndex = CLU.columnIndex(name)
+                    return new CellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
+                }
                 if (name ==~ /[a-zA-Z]+\d+/) {
                     try { return delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.columnIndex(name)) } catch (IOOBEx e) { return null }
                 }

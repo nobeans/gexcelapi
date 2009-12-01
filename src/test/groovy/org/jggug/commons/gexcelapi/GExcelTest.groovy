@@ -129,12 +129,17 @@ class GExcelTest extends GroovyTestCase {
     }
 
     void testWildcardOfRowAndCell() {
-        assert sheet._1 == sheet.getRow(0)
+        assert sheet._1 == sheet.getRow(0) // not CellRange
         assert sheet._1.A_.value == "Sheet1-A1" // A1
         assert sheet._1.B_.value == "B1の内容" // B1
 
         assert sheet._2 == sheet.getRow(1)
         assert sheet._2.A_.value == "あいうえお" // A2
+    }
+
+    void testWildcardOfColumn() {
+        assert sheet.A_ in CellRange
+        assert sheet.A_ == sheet.A1_A7
     }
 
     void testHowToUseRowIterator() {
