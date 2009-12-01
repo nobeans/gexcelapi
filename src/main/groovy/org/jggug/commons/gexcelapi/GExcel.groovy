@@ -28,7 +28,7 @@ class GExcel {
                 if (name == "rows") { return rows() }
                 if (name ==~ /_\d+/) { return delegate.getRow(CLU.rowIndex(name)) }
                 if (name ==~ /[a-zA-Z]+\d+/) {
-                    try { return delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.colIndex(name)) } catch (IOOBEx e) { return null }
+                    try { return delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.columnIndex(name)) } catch (IOOBEx e) { return null }
                 }
                 if (name ==~ /([a-zA-Z]+\d+)_([a-zA-Z]+\d+)/) {
                     def token = name.split("_")
@@ -38,7 +38,7 @@ class GExcel {
             }
             setProperty { name, value ->
                 if (name ==~ /[a-zA-Z]+\d+/) {
-                    try { delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.colIndex(name)).setCellValue(value) } catch (IOOBEx e) { return null }
+                    try { delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.columnIndex(name)).setCellValue(value) } catch (IOOBEx e) { return null }
                 }
             }
             rows { delegate?.findAll{true} }
@@ -51,7 +51,7 @@ class GExcel {
         def methods = {
             getAt { int idx -> delegate.getCell(idx) }
             getProperty { name ->
-                if (name ==~ /[a-zA-Z]+_/) { return delegate.getCell(CLU.colIndex(name)) }
+                if (name ==~ /[a-zA-Z]+_/) { return delegate.getCell(CLU.columnIndex(name)) }
                 null
             }
             validate { delegate.every { cell -> cell.validate() } }

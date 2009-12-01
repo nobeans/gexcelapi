@@ -23,9 +23,9 @@ class CellLabelIterator implements Iterator<String> {
     CellLabelIterator(beginLabel, endLabel) {
         this(
             CLU.rowIndex(beginLabel), 
-            CLU.colIndex(beginLabel),
+            CLU.columnIndex(beginLabel),
             CLU.rowIndex(endLabel), 
-            CLU.colIndex(endLabel)
+            CLU.columnIndex(endLabel)
         )
     }
 

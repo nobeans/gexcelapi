@@ -14,10 +14,10 @@ class CellLabelUtils {
         num - 1 // convert for "index" which starts from 0
     }
 
-    private static convertNumberToColLabel(col) {
+    private static convertNumberToColLabel(column) {
         def result = []
         int q = 1 // mandatory first loop
-        int dividend = col
+        int dividend = column
         while (q > 0) {
             q = dividend / RADIX
             int r = dividend % RADIX
@@ -29,7 +29,7 @@ class CellLabelUtils {
     }
 
     // "A8" -> A -> 0
-    static colIndex(cellLabel) {
+    static columnIndex(cellLabel) {
         def matcher = (cellLabel =~ /([a-zA-Z]+)(_|[0-9]+)/)
         convertColLabelToNumber(matcher[0][1])
     }
@@ -41,7 +41,7 @@ class CellLabelUtils {
     }
 
     // (7, 0) -> "A8"
-    static cellLabel(row, col) {
-        convertNumberToColLabel(col) + (row + 1)
+    static cellLabel(row, column) {
+        convertNumberToColLabel(column) + (row + 1)
     }
 }
