@@ -91,7 +91,6 @@ class GExcel {
                     default: throw new RuntimeException("unsupported cell type: ${delegate.cellType}")
                 }
             }
-            toString { delegate.value as String }
             getLabel { CLU.cellLabel(delegate.rowIndex, delegate.columnIndex) }
             clearValidators {
                 delegate.__validators__ = []

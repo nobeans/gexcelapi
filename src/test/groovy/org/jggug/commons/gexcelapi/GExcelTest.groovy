@@ -110,8 +110,9 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A2.toString() == "あいうえお"
         assert sheet.A3.toString() == "1234.0"
         assert sheet.A4.toString() == "40108.0" // Date is not assigned any cell type
-        assert sheet.A5.toString() == "true"
-        assert sheet.A6.toString() == "false"
+        assert sheet.A5.toString() == "TRUE"
+        assert sheet.A6.toString() == "FALSE"
+        assert sheet.A7.toString() == "1+1"
     }
 
     void testRows() {
