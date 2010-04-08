@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jggug.commons.gexcelapi
+package org.jggug.kobo.gexcelapi
 
-import org.jggug.commons.gexcelapi.CellLabelUtils as CLU
+import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 
 class CellLabelUtilsTest extends GroovyTestCase {
 

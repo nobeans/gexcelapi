@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jggug.commons.gexcelapi
+package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.hssf.usermodel.HSSFSheet
 import org.apache.poi.hssf.usermodel.HSSFRow

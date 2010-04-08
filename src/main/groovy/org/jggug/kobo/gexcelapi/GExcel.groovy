@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.jggug.commons.gexcelapi
+package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.hssf.usermodel.*
 import org.apache.poi.poifs.filesystem.*
 import org.apache.poi.ss.usermodel.*
-import org.jggug.commons.gexcelapi.CellLabelUtils as CLU
+import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 import java.lang.IndexOutOfBoundsException as IOOBEx
 
 class GExcel {

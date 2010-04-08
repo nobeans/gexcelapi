@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jggug.commons.gexcelapi
+package org.jggug.kobo.gexcelapi
 
 class CellRangeTest extends GroovyTestCase {
 
