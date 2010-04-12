@@ -15,6 +15,7 @@
  */
 
 apply plugin: 'groovy'
+apply plugin: 'maven'
 
 repositories {
     mavenCentral()
@@ -38,4 +39,12 @@ compileGroovy {
 compileTestGroovy {
     groovyOptions.encoding = defaultEncoding
     options.encoding = defaultEncoding
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        // If you want to deploy it, set an entry which has a key of 'local.maven.dir' at System properties.
+        // ex) In $HOME/.gradle/gradle.properties: systemProp.local.maven.dirs=$HOME/myrepos/maven2
+        repository url: System.properties['local.maven.dir']
+    }
 }
