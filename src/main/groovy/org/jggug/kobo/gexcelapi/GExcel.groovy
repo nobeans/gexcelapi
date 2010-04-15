@@ -103,7 +103,7 @@ class GExcel {
                     case Integer: return delegate.numericCellValue.intValue()
                     case Boolean: return delegate.booleanCellValue
                     case Date:    return delegate.dateCellValue
-                    case String:  return new String(delegate.stringCellValue.getBytes("Windows-31J")) // Windows-31J -> default encoding
+                    case String:  return delegate.stringCellValue
                     default: throw new RuntimeException("unsupported cell type: ${delegate.cellType}")
                 }
             }
