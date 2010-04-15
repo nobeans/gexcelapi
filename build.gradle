@@ -20,9 +20,14 @@ apply plugin: 'maven'
 repositories {
     mavenCentral()
 }
+
+configurations {
+    groovyAnd { extendsFrom intTestCompile, runtime }
+}
+
 dependencies {
     groovy 'org.codehaus.groovy:groovy:1.7.2'
-    groovy 'org.apache.poi:poi:3.5-FINAL'
+    compile 'org.apache.poi:poi:3.5-FINAL'
     testCompile 'junit:junit:4.+'
 }
 
