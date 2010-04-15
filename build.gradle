@@ -21,8 +21,9 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    groovy group:'org.codehaus.groovy', name:'groovy', version:'1.7.2'
-    groovy group:'org.apache.poi', name:'poi', version:'3.5-FINAL'
+    groovy 'org.codehaus.groovy:groovy:1.7.2'
+    groovy 'org.apache.poi:poi:3.5-FINAL'
+    testCompile 'junit:junit:4.+'
 }
 
 def defaultEncoding = 'UTF-8'
