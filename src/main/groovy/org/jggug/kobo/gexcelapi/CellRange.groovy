@@ -16,19 +16,17 @@
 
 package org.jggug.kobo.gexcelapi
 
-import org.apache.poi.hssf.usermodel.HSSFSheet
-import org.apache.poi.hssf.usermodel.HSSFRow
-import org.apache.poi.ss.usermodel.Row
+import org.apache.poi.ss.usermodel.Sheet
 
 class CellRange implements Range {
 
     private List list
 
-    CellRange(HSSFSheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
+    CellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
         list = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect { sheet[it] }
     }
 
-    CellRange(HSSFSheet sheet, String beginCellLabel, String endCellLabel) {
+    CellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
         list = new CellLabelIterator(beginCellLabel, endCellLabel).collect { sheet[it] }
     }
 

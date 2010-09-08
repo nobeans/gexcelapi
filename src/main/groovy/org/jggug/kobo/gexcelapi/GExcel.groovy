@@ -16,8 +16,6 @@
 
 package org.jggug.kobo.gexcelapi
 
-import org.apache.poi.hssf.usermodel.*
-import org.apache.poi.poifs.filesystem.*
 import org.apache.poi.ss.usermodel.*
 import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 import java.lang.IndexOutOfBoundsException as IOOBEx
@@ -25,20 +23,20 @@ import java.lang.IndexOutOfBoundsException as IOOBEx
 class GExcel {
 
     static {
-        expandHSSFWorkbook()
-        expandHSSFSheet()
-        expandHSSFRow()
-        expandHSSFCell()
+        expandWorkbook()
+        expandSheet()
+        expandRow()
+        expandCell()
     }
 
-    private static expandHSSFWorkbook() {
-        HSSFWorkbook.metaClass.define {
+    private static expandWorkbook() {
+        Workbook.metaClass.define {
             getAt { int idx -> delegate.getSheetAt(idx) }
             getProperty { String name -> delegate.getSheet(name) }
         }
     }
 
-    private static expandHSSFSheet() {
+    private static expandSheet() {
         def methods = {
             getProperty { name ->
                 if (name == "rows") { return rows() }
@@ -64,10 +62,10 @@ class GExcel {
             rows { delegate?.findAll{true} }
             validate { delegate.rows.every { row -> row.validate() } }
         }
-        HSSFSheet.metaClass.define methods
+        Sheet.metaClass.define methods
     }
 
-    private static expandHSSFRow() {
+    private static expandRow() {
         def methods = {
             getAt { int idx -> delegate.getCell(idx) }
             getProperty { name ->
@@ -76,12 +74,12 @@ class GExcel {
             }
             validate { delegate.every { cell -> cell.validate() } }
         }
-        HSSFRow.metaClass.define methods
+        Row.metaClass.define methods
     }
 
-    private static expandHSSFCell() {
-        HSSFCell.metaClass.__validators__ = null
-        HSSFCell.metaClass.define {
+    private static expandCell() {
+        Cell.metaClass.__validators__ = null
+        Cell.metaClass.define {
             isStringType  { delegate.cellType == Cell.CELL_TYPE_STRING }
             isNumericType { delegate.cellType == Cell.CELL_TYPE_NUMERIC }
             isBooleanType { delegate.cellType == Cell.CELL_TYPE_BOOLEAN }
@@ -130,6 +128,6 @@ class GExcel {
 
     static open(String file) { open(new File(file)) }
     static open(File file) { open(new FileInputStream(file)) }
-    static open(InputStream is) { new HSSFWorkbook(new POIFSFileSystem(is)) }
+    static open(InputStream is) { WorkbookFactory.create(is) }
 }
 
