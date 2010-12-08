@@ -19,8 +19,9 @@ package org.jggug.kobo.gexcelapi
 class GExcelTest extends GroovyTestCase {
 
     def sampleFile = "build/classes/test/sample.xls"
+    def book
+    def sheet
 
-    def book, sheet
     void setUp() {
         book = GExcel.open(sampleFile)
         sheet = book[0]
@@ -49,7 +50,7 @@ class GExcelTest extends GroovyTestCase {
 
     void testAccessCellValue() {
         assert sheet["A1"].value == "Sheet1-A1"
- 
+
         assert sheet.A1.value == "Sheet1-A1"
         sheet.A1.value = "MODIFIED"
         assert sheet.A1.value == "MODIFIED"
@@ -209,5 +210,35 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A1_B3.collect { it?.value } == ["Sheet1-A1", "X", "X", "B1の内容", "X", null] // cannot apply a value to a null cell
     }
 
+    void testLabel_forCell() {
+        println sheet.A1
+        assert sheet.A1.label == "A1"
+        assert sheet.A2.label == "A2"
+        assert sheet.A3.label == "A3"
+        assert sheet.B1.label == "B1"
+        assert sheet.B2.label == "B2"
+    }
+
+    void testColumnLabel_forCell() {
+        assert sheet.A1.columnLabel == "A"
+        assert sheet.A2.columnLabel == "A"
+        assert sheet.A3.columnLabel == "A"
+        assert sheet.B1.columnLabel == "B"
+        assert sheet.B2.columnLabel == "B"
+    }
+
+    void testRowLabel_forCell() {
+        assert sheet.A1.rowLabel == "1"
+        assert sheet.A2.rowLabel == "2"
+        assert sheet.A3.rowLabel == "3"
+        assert sheet.B1.rowLabel == "1"
+        assert sheet.B2.rowLabel == "2"
+    }
+
+    void testLabel_forRow() {
+        assert sheet.getRow(0).label == "1"
+        assert sheet.getRow(1).label == "2"
+        assert sheet.getRow(2).label == "3"
+    }
 }
 

@@ -50,17 +50,17 @@ class CellLabelUtilsTest extends GroovyTestCase {
         assert CLU.columnIndex("AAA_") == 702 // wildcard
     }
 
-    void testConvertNumberToColLabel() {
-          assert CLU.convertNumberToColLabel(0) == 'A'
-          assert CLU.convertNumberToColLabel(1) == 'B'
-          assert CLU.convertNumberToColLabel(2) == 'C'
-          assert CLU.convertNumberToColLabel(25) == 'Z'
-          assert CLU.convertNumberToColLabel(26) == 'AA'
-          assert CLU.convertNumberToColLabel(27) == 'AB'
-          assert CLU.convertNumberToColLabel(52) == 'BA'
-          assert CLU.convertNumberToColLabel(77) == 'BZ'
-          assert CLU.convertNumberToColLabel(701) == 'ZZ'
-          assert CLU.convertNumberToColLabel(702) == 'AAA'
+    void testcolumnLabel() {
+          assert CLU.columnLabel(0) == 'A'
+          assert CLU.columnLabel(1) == 'B'
+          assert CLU.columnLabel(2) == 'C'
+          assert CLU.columnLabel(25) == 'Z'
+          assert CLU.columnLabel(26) == 'AA'
+          assert CLU.columnLabel(27) == 'AB'
+          assert CLU.columnLabel(52) == 'BA'
+          assert CLU.columnLabel(77) == 'BZ'
+          assert CLU.columnLabel(701) == 'ZZ'
+          assert CLU.columnLabel(702) == 'AAA'
     }
 
     void testCellLabel() {

@@ -72,6 +72,7 @@ class GExcel {
                 if (name ==~ /[a-zA-Z]+_/) { return delegate.getCell(CLU.columnIndex(name)) }
                 null
             }
+            getLabel { CLU.rowLabel(delegate.getRowNum()) }
             validate { delegate.every { cell -> cell.validate() } }
         }
         Row.metaClass.define methods
@@ -106,6 +107,8 @@ class GExcel {
                 }
             }
             getLabel { CLU.cellLabel(delegate.rowIndex, delegate.columnIndex) }
+            getColumnLabel { CLU.columnLabel(delegate.columnIndex) }
+            getRowLabel { CLU.rowLabel(delegate.rowIndex) }
             clearValidators {
                 delegate.__validators__ = []
             }

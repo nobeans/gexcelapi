@@ -30,20 +30,6 @@ class CellLabelUtils {
         num - 1 // convert for "index" which starts from 0
     }
 
-    private static convertNumberToColLabel(column) {
-        def result = []
-        int q = 1 // mandatory first loop
-        int dividend = column
-        while (q > 0) {
-            q = dividend / RADIX
-            int r = dividend % RADIX
-            result << String.valueOf((r + ORIGIN) as char)
-            //println "$dividend, $RADIX => $q ($r) : $result"
-            dividend = q - 1 // 0 == A
-        }
-        return result.reverse().join()
-    }
-
     // "A8" -> A -> 0
     static columnIndex(cellLabel) {
         def matcher = (cellLabel =~ /([a-zA-Z]+)(_|[0-9]+)/)
@@ -58,6 +44,26 @@ class CellLabelUtils {
 
     // (7, 0) -> "A8"
     static cellLabel(row, column) {
-        convertNumberToColLabel(column) + (row + 1)
+        columnLabel(column) + rowLabel(row)
+    }
+
+    // 0 -> "A"
+    static columnLabel(column) {
+        def result = []
+        int q = 1 // mandatory first loop
+        int dividend = column
+        while (q > 0) {
+            q = dividend / RADIX
+            int r = dividend % RADIX
+            result << String.valueOf((r + ORIGIN) as char)
+            //println "$dividend, $RADIX => $q ($r) : $result"
+            dividend = q - 1 // 0 == A
+        }
+        return result.reverse().join()
+    }
+
+    // 7 -> "8"
+    static rowLabel(row) {
+        "${row + 1}"
     }
 }
