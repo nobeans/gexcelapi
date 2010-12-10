@@ -18,7 +18,7 @@ package org.jggug.kobo.gexcelapi
 
 import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 
-class CellLabelIterator implements Iterator<String> {
+class CellLabelIterator implements Iterator<Iterable<String>> {
 
     private final int beginRow
     private final int beginColumn
@@ -26,38 +26,38 @@ class CellLabelIterator implements Iterator<String> {
     private final int endColumn // inclusive
 
     private int nextRow
-    private int nextColumn
 
     CellLabelIterator(beginRow, beginColumn, endRow, endColumn) {
         this.beginRow = beginRow
         this.beginColumn = beginColumn
         this.endRow = endRow
         this.endColumn = endColumn
-        (nextRow, nextColumn) = [beginRow, beginColumn]
+        this.nextRow = beginRow
     }
 
     CellLabelIterator(beginLabel, endLabel) {
         this(
-            CLU.rowIndex(beginLabel), 
+            CLU.rowIndex(beginLabel),
             CLU.columnIndex(beginLabel),
-            CLU.rowIndex(endLabel), 
+            CLU.rowIndex(endLabel),
             CLU.columnIndex(endLabel)
         )
     }
 
     boolean hasNext() {
-        nextRow <= endRow && nextColumn <= endColumn
+        nextRow <= endRow
     }
 
-    String next() {
+    /**
+     * Return labels in a next row.
+     */
+    Iterable<String> next() {
         if (!hasNext()) { throw new NoSuchElementException("out of range") }
-        def (row, column) = [nextRow, nextColumn]
-        nextRow++
-        if (nextRow > endRow) {
-            nextColumn++
-            nextRow = beginRow
+        def columnsInARow = (beginColumn..endColumn).collect{ column ->
+            CLU.cellLabel(nextRow, column)
         }
-        return CLU.cellLabel(row, column) // if null, return value is null
+        nextRow++
+        return columnsInARow
     }
 
     void remove() {

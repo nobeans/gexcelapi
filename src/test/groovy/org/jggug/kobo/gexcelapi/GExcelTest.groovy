@@ -146,18 +146,30 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.rows == sheet.rows() // both like property access and like method call
     }
 
-    void testWildcardOfRowAndCell() {
-        assert sheet._1 == sheet.getRow(0) // not CellRange
-        assert sheet._1.A_.value == "Sheet1-A1" // A1
-        assert sheet._1.B_.value == "B1の内容" // B1
+    void testSequentialCellRange_wildcardOfRow() {
+        assert sheet._1 == [sheet.A1, sheet.B1]
+        assert sheet._1 in SequentialCellRange
+        assert sheet._1.A_ == sheet.A1
+        assert sheet._1.B_ == sheet.B1
 
-        assert sheet._2 == sheet.getRow(1)
-        assert sheet._2.A_.value == "あいうえお" // A2
+        assert sheet._2 == [sheet.A2, sheet.B2]
+        assert sheet._2 in SequentialCellRange
+        assert sheet._2.A_ == sheet.A2
+        assert sheet._2.B_ == sheet.B2
     }
 
-    void testWildcardOfColumn() {
-        assert sheet.A_ in CellRange
-        assert sheet.A_ == sheet.A1_A7
+    void testSequentialCellRange_wildcardOfColumn() {
+        assert sheet.A_ in SequentialCellRange
+        assert sheet.A_ == [sheet.A1, sheet.A2, sheet.A3, sheet.A4, sheet.A5, sheet.A6, sheet.A7]
+        assert sheet.A_._1 == sheet.A1
+        assert sheet.B_._3 == sheet.B3
+    }
+
+    void testRectangleCellRange() {
+        assert sheet.A1_B2 == [[sheet.A1, sheet.B1], [sheet.A2, sheet.B2]]
+        assert sheet.A1_B3 == [[sheet.A1, sheet.B1], [sheet.A2, sheet.B2], [sheet.A3, sheet.B3]]
+        assert sheet.A1_A3 == [[sheet.A1], [sheet.A2], [sheet.A3]]
+        assert sheet.A1_C1 == [[sheet.A1, sheet.B1, sheet.C1]]
     }
 
     void testHowToUseRowIterator() {
@@ -193,21 +205,16 @@ class GExcelTest extends GroovyTestCase {
         sheet.B1.validators << { it.value == "B1の内容" }
         assert sheet.A1.validate()
         assert sheet.B1.validate()
-        assert sheet._1.validate() // row
+        assert sheet.getRow(0).validate() // row
+        assert sheet._1.validate() // SequentialCellRange for row
+        assert sheet.A_.validate() // SequentialCellRange for column
+        assert sheet.A1_B2.validate() // RectangleCellRange for column
         assert sheet.validate()    // sheet
 
         sheet.B1.validators << { false } // force invalid
         assert sheet.B1.validate() == false
         assert sheet._1.validate() == false // recursive
         assert sheet.validate() == false    // recursive
-    }
-
-    void testCellRange() {
-        assert sheet.A1_B2.collect { it?.value } == ["Sheet1-A1", "あいうえお", "B1の内容", "B2の内容"]
-        assert sheet.A1_B3.collect { it?.value } == ["Sheet1-A1", "あいうえお", 1234.0, "B1の内容", "B2の内容", null]
-
-        assert sheet.A2_B3.each { it?.value = "X" }
-        assert sheet.A1_B3.collect { it?.value } == ["Sheet1-A1", "X", "X", "B1の内容", "X", null] // cannot apply a value to a null cell
     }
 
     void testLabel_forCell() {

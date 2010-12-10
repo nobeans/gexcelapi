@@ -36,21 +36,50 @@ class GExcel {
         }
     }
 
+    private static expandSequentialCellRangeInstanceAsWildcardForRow(SequentialCellRange range) {
+        range.metaClass.getProperty = { name ->
+            if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
+                int columnIndex = CLU.columnIndex(name)
+                return range[columnIndex]
+            }
+            return delegate[name]
+        }
+    }
+
+    private static expandSequentialCellRangeInstanceAsWildcardForColumn(SequentialCellRange range) {
+        range.metaClass.getProperty = { name ->
+            if (name ==~ /_\d+/) { // wildcard for row
+                int rowIndex = CLU.rowIndex(name)
+                return range[rowIndex]
+            }
+            return delegate[name]
+        }
+    }
+
     private static expandSheet() {
         def methods = {
             getProperty { name ->
                 if (name == "rows") { return rows() }
-                if (name ==~ /_\d+/) { return delegate.getRow(CLU.rowIndex(name)) }
-                if (name ==~ /[a-zA-Z]+_/) {
-                    int columnIndex = CLU.columnIndex(name)
-                    return new CellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
+                if (name ==~ /_\d+/) { // wildcard for row
+                    int rowIndex = CLU.rowIndex(name)
+                    def row = delegate.getRow(CLU.rowIndex(name))
+                    if (!row) { return null }
+                    def range = new SequentialCellRange(delegate, rowIndex, row.getFirstCellNum(), rowIndex, row.getLastCellNum() - 1)
+                    expandSequentialCellRangeInstanceAsWildcardForRow(range)
+                    return range
                 }
-                if (name ==~ /[a-zA-Z]+\d+/) {
+                if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
+                    int columnIndex = CLU.columnIndex(name)
+                    def range = new SequentialCellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
+                    expandSequentialCellRangeInstanceAsWildcardForColumn(range)
+                    return range
+                }
+                if (name ==~ /[a-zA-Z]+\d+/) { // a specified cell
                     try { return delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.columnIndex(name)) } catch (IOOBEx e) { return null }
                 }
-                if (name ==~ /([a-zA-Z]+\d+)_([a-zA-Z]+\d+)/) {
+                if (name ==~ /([a-zA-Z]+\d+)_([a-zA-Z]+\d+)/) { // cells in a specified rectangle
                     def token = name.split("_")
-                    return new CellRange(delegate, token[0], token[1])
+                    return new RectangleCellRange(delegate, token[0], token[1])
                 }
                 null
             }
