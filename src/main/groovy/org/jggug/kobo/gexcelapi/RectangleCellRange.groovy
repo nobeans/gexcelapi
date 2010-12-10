@@ -18,59 +18,17 @@ package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.ss.usermodel.Sheet
 
-class RectangleCellRange implements Range {
+class RectangleCellRange extends AbstractCellRange {
 
     @Delegate
     private List list
 
     RectangleCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
-        list = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect{ row -> row.collect{ sheet[it] } }
+        super(new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect{ row -> row.collect{ sheet[it] } })
     }
 
     RectangleCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
-        list = new CellLabelIterator(beginCellLabel, endCellLabel).collect{ row -> row.collect{ sheet[it] } }
+        super(new CellLabelIterator(beginCellLabel, endCellLabel).collect{ row -> row.collect{ sheet[it] } })
     }
 
-    boolean validate() {
-        list.every { row ->
-            row.every { cell ->
-                cell?.validate()
-            }
-        }
-    }
-
-    @Override
-    boolean containsWithinBounds(Object o) {
-        list.contains(o)
-    }
-
-    @Override
-    Comparable getFrom() {
-        list.first()
-    }
-
-    @Override
-    Comparable getTo() {
-        list.tail()
-    }
-
-    @Override
-    String inspect() {
-        "#$list"
-    }
-
-    @Override
-    boolean isReverse() {
-        false // fixed
-    }
-
-    @Override
-    List step(int step) {
-        throw new UnsupportedOperationException("not implemented")
-    }
-
-    @Override
-    void step(int step, Closure closure) {
-        throw new UnsupportedOperationException("not implemented")
-    }
 }
