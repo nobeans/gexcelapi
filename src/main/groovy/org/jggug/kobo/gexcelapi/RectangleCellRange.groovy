@@ -20,15 +20,12 @@ import org.apache.poi.ss.usermodel.Sheet
 
 class RectangleCellRange extends AbstractCellRange {
 
-    @Delegate
-    private List list
-
     RectangleCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
-        super(new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect{ row -> row.collect{ sheet[it] } })
+        super(sheet, beginRow, beginColumn, endRow, endColumn)
     }
 
     RectangleCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
-        super(new CellLabelIterator(beginCellLabel, endCellLabel).collect{ row -> row.collect{ sheet[it] } })
+        super(sheet, beginCellLabel, endCellLabel)
     }
 
 }

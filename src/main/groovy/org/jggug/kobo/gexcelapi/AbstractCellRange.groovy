@@ -17,18 +17,25 @@
 package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.ss.usermodel.Sheet
+import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 
 abstract class AbstractCellRange implements Range {
 
     @Delegate
-    private List list
+    List<List> rows
 
-    AbstractCellRange(List list) {
-        this.list = list
+    CellLabelIterator cellLabelIterator
+
+    AbstractCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
+        this.rows = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect{ row -> row.collect{ sheet[it] } }
+    }
+
+    AbstractCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
+        this.rows = new CellLabelIterator(beginCellLabel, endCellLabel).collect{ row -> row.collect{ sheet[it] } }
     }
 
     boolean validate() {
-        list.every { row ->
+        rows.every { row ->
             row.every { cell ->
                 cell?.validate()
             }
@@ -37,22 +44,22 @@ abstract class AbstractCellRange implements Range {
 
     @Override
     boolean containsWithinBounds(Object o) {
-        list.contains(o)
+        rows.contains(o)
     }
 
     @Override
     Comparable getFrom() {
-        list.first()
+        rows.first()
     }
 
     @Override
     Comparable getTo() {
-        list.tail()
+        rows.tail()
     }
 
     @Override
     String inspect() {
-        "#$list"
+        "#$rows"
     }
 
     @Override

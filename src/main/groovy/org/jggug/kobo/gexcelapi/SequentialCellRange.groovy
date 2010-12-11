@@ -17,15 +17,17 @@
 package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.ss.usermodel.Sheet
-import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 
 class SequentialCellRange extends AbstractCellRange {
 
     SequentialCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
-        super(new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect{ row -> row.collect{ sheet[it] } }.flatten())
+        super(sheet, beginRow, beginColumn, endRow, endColumn)
+        list = list.flatten()
     }
 
     SequentialCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
-        super(new CellLabelIterator(beginCellLabel, endCellLabel).collect{ row -> row.collect{ sheet[it] } }.flatten())
+        super(sheet, beginCellLabel, endCellLabel)
+        list = list.flatten()
     }
+
 }
