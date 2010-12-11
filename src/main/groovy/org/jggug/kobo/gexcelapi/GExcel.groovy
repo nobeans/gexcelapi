@@ -116,8 +116,10 @@ class GExcel {
             getValue {
                 // implicitly accessing value by appropriate type
                 switch(delegate.cellType) {
-                    case Cell.CELL_TYPE_STRING:  return delegate.stringCellValue
                     case Cell.CELL_TYPE_NUMERIC: return delegate.numericCellValue
+                    case Cell.CELL_TYPE_STRING:  return delegate.stringCellValue
+                    case Cell.CELL_TYPE_FORMULA: return delegate.cellFormula
+                    case Cell.CELL_TYPE_BLANK:   return null
                     case Cell.CELL_TYPE_BOOLEAN: return delegate.booleanCellValue
                     default: throw new RuntimeException("unsupported cell type: ${delegate.cellType}")
                 }

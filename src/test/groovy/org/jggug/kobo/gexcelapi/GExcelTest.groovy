@@ -79,12 +79,7 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A5.value == true
         assert sheet.A6.value == false
 
-        try {
-            sheet.A7.value
-            fail()
-        } catch (Exception e) {
-            assert e.message == "unsupported cell type: 2"
-        }
+        assert sheet.A7.value == "1+1"
     }
 
     void testAccessCellsOfSomeTypes_asType() {
