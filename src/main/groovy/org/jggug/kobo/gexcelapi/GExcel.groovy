@@ -63,7 +63,10 @@ class GExcel {
                 if (name ==~ /_\d+/) { // wildcard for row
                     int rowIndex = CLU.rowIndex(name)
                     def row = delegate.getRow(CLU.rowIndex(name))
-                    if (!row) { return null }
+                    if (!row) {
+                        row = delegate.createRow(rowIndex)
+                        row.createCell(0)
+                    }
                     def range = new SequentialCellRange(delegate, rowIndex, row.getFirstCellNum(), rowIndex, row.getLastCellNum() - 1)
                     expandSequentialCellRangeInstanceAsWildcardForRow(range)
                     return range
@@ -75,18 +78,41 @@ class GExcel {
                     return range
                 }
                 if (name ==~ /[a-zA-Z]+\d+/) { // a specified cell
-                    try { return delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.columnIndex(name)) } catch (IOOBEx e) { return null }
+                    int rowIndex = CLU.rowIndex(name)
+                    def row = delegate.getRow(CLU.rowIndex(name))
+                    if (!row) {
+                        row = delegate.createRow(rowIndex)
+                        row.createCell(0)
+                    }
+                    int columnIndex = CLU.columnIndex(name)
+                    try {
+                        return row.getCell(CLU.columnIndex(name))
+                    } catch (IOOBEx e) {
+                        return row.createCell(columnIndex)
+                    }
                 }
                 if (name ==~ /([a-zA-Z]+\d+)_([a-zA-Z]+\d+)/) { // cells in a specified rectangle
                     def token = name.split("_")
                     return new RectangleCellRange(delegate, token[0], token[1])
                 }
-                null
+                return delegate[name]
             }
             setProperty { name, value ->
                 if (name ==~ /[a-zA-Z]+\d+/) {
-                    try { delegate.getRow(CLU.rowIndex(name))?.getCell(CLU.columnIndex(name)).setCellValue(value) } catch (IOOBEx e) { return null }
+                    int rowIndex = CLU.rowIndex(name)
+                    def row = delegate.getRow(CLU.rowIndex(name))
+                    if (!row) {
+                        row = delegate.createRow(rowIndex)
+                        row.createCell(0)
+                    }
+                    int columnIndex = CLU.columnIndex(name)
+                    try {
+                        return row.getCell(CLU.columnIndex(name)).setCellValue(value)
+                    } catch (IOOBEx e) {
+                        return row.createCell(columnIndex).setCellValue(value)
+                    }
                 }
+                delegate[name] = value
             }
             rows { delegate?.findAll{true} }
             validate { delegate.rows.every { row -> row.validate() } }
@@ -98,8 +124,10 @@ class GExcel {
         def methods = {
             getAt { int idx -> delegate.getCell(idx) }
             getProperty { name ->
-                if (name ==~ /[a-zA-Z]+_/) { return delegate.getCell(CLU.columnIndex(name)) }
-                null
+                if (name ==~ /[a-zA-Z]+_/) {
+                    return delegate.getCell(CLU.columnIndex(name))
+                }
+                delegate[name]
             }
             getLabel { CLU.rowLabel(delegate.getRowNum()) }
             validate { delegate.every { cell -> cell.validate() } }

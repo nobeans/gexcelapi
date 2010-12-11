@@ -27,11 +27,19 @@ abstract class AbstractCellRange implements Range {
     CellLabelIterator cellLabelIterator
 
     AbstractCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
-        this.rows = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect{ row -> row.collect{ sheet[it] } }
+        this.rows = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect { row ->
+            row.collect { label ->
+                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
+            }
+        }
     }
 
     AbstractCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
-        this.rows = new CellLabelIterator(beginCellLabel, endCellLabel).collect{ row -> row.collect{ sheet[it] } }
+        this.rows = new CellLabelIterator(beginCellLabel, endCellLabel).collect { row ->
+            row.collect { label ->
+                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
+            }
+        }
     }
 
     boolean validate() {
