@@ -141,20 +141,20 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.rows == sheet.rows() // both like property access and like method call
     }
 
-    void testSequentialCellRange_wildcardOfRow() {
+    void testCellRange_wildcardOfRow() {
         assert sheet._1 == [sheet.A1, sheet.B1]
-        assert sheet._1 in SequentialCellRange
+        assert sheet._1 in CellRange
         assert sheet._1.A_ == sheet.A1
         assert sheet._1.B_ == sheet.B1
 
         assert sheet._2 == [sheet.A2, sheet.B2]
-        assert sheet._2 in SequentialCellRange
+        assert sheet._2 in CellRange
         assert sheet._2.A_ == sheet.A2
         assert sheet._2.B_ == sheet.B2
     }
 
-    void testSequentialCellRange_wildcardOfColumn() {
-        assert sheet.A_ in SequentialCellRange
+    void testCellRange_wildcardOfColumn() {
+        assert sheet.A_ in CellRange
         assert sheet.A_ == [sheet.A1, sheet.A2, sheet.A3, sheet.A4, sheet.A5, sheet.A6, sheet.A7]
         assert sheet.A_._1 == sheet.A1
         assert sheet.B_._3 == sheet.B3
@@ -201,9 +201,9 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A1.validate()
         assert sheet.B1.validate()
         assert sheet.getRow(0).validate() // row
-        assert sheet._1.validate() // SequentialCellRange for row
-        assert sheet.A_.validate() // SequentialCellRange for column
-        assert sheet.A1_B2.validate() // RectangleCellRange for column
+        assert sheet._1.validate() // sequential CellRange for row
+        assert sheet.A_.validate() // sequential CellRange for column
+        assert sheet.A1_B2.validate() // rectangle CellRange for column
         assert sheet.validate()    // sheet
 
         sheet.B1.validators << { false } // force invalid
