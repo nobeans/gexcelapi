@@ -18,7 +18,7 @@ package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.ss.usermodel.Sheet
 
-class RectangleCellRange extends AbstractCellRange {
+class RectangleCellRange extends CellRange {
 
     RectangleCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
         super(sheet, beginRow, beginColumn, endRow, endColumn)

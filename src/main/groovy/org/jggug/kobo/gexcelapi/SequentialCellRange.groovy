@@ -18,7 +18,7 @@ package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.ss.usermodel.Sheet
 
-class SequentialCellRange extends AbstractCellRange {
+class SequentialCellRange extends CellRange {
 
     SequentialCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
         super(sheet, beginRow, beginColumn, endRow, endColumn)

@@ -16,27 +16,28 @@
 
 package org.jggug.kobo.gexcelapi
 
-import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Sheet
 import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 
-abstract class AbstractCellRange implements Range {
+abstract class CellRange implements Range {
 
     @Delegate
-    List list
+    List<List> list
 
-    AbstractCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
-        this.list = extractList(sheet, new CellLabelIterator(beginRow, beginColumn, endRow, endColumn))
-    }
+    CellLabelIterator cellLabelIterator
 
-    AbstractCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
-        this.list = extractList(sheet, new CellLabelIterator(beginCellLabel, endCellLabel))
-    }
-
-    private static extractList(sheet, iterator) {
-        return iterator.collect { row ->
+    CellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
+        this.list = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect { row ->
             row.collect { label ->
-                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label), Cell.CELL_TYPE_BLANK)
+                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
+            }
+        }
+    }
+
+    CellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
+        this.list = new CellLabelIterator(beginCellLabel, endCellLabel).collect { row ->
+            row.collect { label ->
+                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
             }
         }
     }
