@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    groovy 'org.codehaus.groovy:groovy:1.7.4'
+    groovy 'org.codehaus.groovy:groovy:1.7.5'
     compile 'org.apache.poi:poi-ooxml:3.7-beta2'
     testCompile 'junit:junit:4.+'
 }
