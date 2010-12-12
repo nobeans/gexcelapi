@@ -18,7 +18,6 @@ package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.ss.usermodel.*
 import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
-import java.lang.IndexOutOfBoundsException as IOOBEx
 
 class GExcel {
 
@@ -60,7 +59,7 @@ class GExcel {
 
     private static getRowFromSheetByLabel(sheet, label) {
         int rowIndex = CLU.rowIndex(label)
-        def row = sheet.getRow(CLU.rowIndex(label))
+        def row = sheet.getRow(rowIndex)
         if (!row) {
             row = sheet.createRow(rowIndex)
             row.createCell(0, Cell.CELL_TYPE_BLANK)
@@ -70,11 +69,11 @@ class GExcel {
 
     private static getCellFromRowByLabel(row, label) {
         int columnIndex = CLU.columnIndex(label)
-        try {
-            return row.getCell(CLU.columnIndex(label))
-        } catch (IOOBEx e) {
-            return row.createCell(columnIndex, Cell.CELL_TYPE_BLANK)
+        def cell = row.getCell(columnIndex)
+        if (!cell) {
+            cell = row.createCell(columnIndex, Cell.CELL_TYPE_BLANK)
         }
+        return cell
     }
 
     private static expandSheet() {
