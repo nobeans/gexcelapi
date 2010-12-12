@@ -35,43 +35,21 @@ class GExcel {
         }
     }
 
-    private static getRowFromSheetByLabel(sheet, label) {
-        int rowIndex = CLU.rowIndex(label)
-        def row = sheet.getRow(rowIndex)
-        if (!row) {
-            row = sheet.createRow(rowIndex)
-            row.createCell(0, Cell.CELL_TYPE_BLANK)
-        }
-        return row
-    }
-
-    private static getCellFromRowByLabel(row, label) {
-        int columnIndex = CLU.columnIndex(label)
-        def cell = row.getCell(columnIndex)
-        if (!cell) {
-            cell = row.createCell(columnIndex, Cell.CELL_TYPE_BLANK)
-        }
-        return cell
-    }
-
     private static expandSheet() {
-        def methods = {
+        Sheet.metaClass.define {
             getProperty { name ->
                 if (name == "rows") { return rows() }
                 if (name ==~ /_\d+/) { // wildcard for row
                     def row = getRowFromSheetByLabel(delegate, name)
-                    def range = CellRange.newSequentialCellRange(delegate, row.rowNum, row.getFirstCellNum(), row.rowNum, row.getLastCellNum() - 1)
-                    return range
+                    return CellRange.newSequentialCellRange(delegate, row.rowNum, row.getFirstCellNum(), row.rowNum, row.getLastCellNum() - 1)
                 }
                 if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
                     int columnIndex = CLU.columnIndex(name)
-                    def range = CellRange.newSequentialCellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
-                    return range
+                    return CellRange.newSequentialCellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
                 }
                 if (name ==~ /[a-zA-Z]+\d+/) { // a specified cell
                     def row = getRowFromSheetByLabel(delegate, name)
-                    def cell = getCellFromRowByLabel(row, name)
-                    return cell
+                    return getCellFromRowByLabel(row, name)
                 }
                 if (name ==~ /([a-zA-Z]+\d+)_([a-zA-Z]+\d+)/) { // cells in a specified rectangle
                     def token = name.split("_")
@@ -90,23 +68,20 @@ class GExcel {
             rows { delegate?.findAll{true} }
             validate { delegate.rows.every { row -> row.validate() } }
         }
-        Sheet.metaClass.define methods
     }
 
     private static expandRow() {
-        def methods = {
+        Row.metaClass.define {
             getAt { int idx -> delegate.getCell(idx) }
             getProperty { name ->
                 if (name ==~ /[a-zA-Z]+_/) {
-                    def cell = getCellFromRowByLabel(delegate, name)
-                    return cell
+                    return getCellFromRowByLabel(delegate, name)
                 }
                 delegate[name]
             }
             getLabel { CLU.rowLabel(delegate.getRowNum()) }
             validate { delegate.every { cell -> cell.validate() } }
         }
-        Row.metaClass.define methods
     }
 
     private static expandCell() {
@@ -160,6 +135,25 @@ class GExcel {
                 delegate.validators.every { validator -> validator.call(delegate) }
             }
         }
+    }
+
+    private static getRowFromSheetByLabel(sheet, label) {
+        int rowIndex = CLU.rowIndex(label)
+        def row = sheet.getRow(rowIndex)
+        if (!row) {
+            row = sheet.createRow(rowIndex)
+            row.createCell(0, Cell.CELL_TYPE_BLANK)
+        }
+        return row
+    }
+
+    private static getCellFromRowByLabel(row, label) {
+        int columnIndex = CLU.columnIndex(label)
+        def cell = row.getCell(columnIndex)
+        if (!cell) {
+            cell = row.createCell(columnIndex, Cell.CELL_TYPE_BLANK)
+        }
+        return cell
     }
 
     static open(String file) { open(new File(file)) }
