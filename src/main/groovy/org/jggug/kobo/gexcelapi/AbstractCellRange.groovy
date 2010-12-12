@@ -16,34 +16,33 @@
 
 package org.jggug.kobo.gexcelapi
 
+import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Sheet
 import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 
 abstract class AbstractCellRange implements Range {
 
     @Delegate
-    List<List> rows
-
-    CellLabelIterator cellLabelIterator
+    List list
 
     AbstractCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
-        this.rows = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect { row ->
-            row.collect { label ->
-                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
-            }
-        }
+        this.list = extractList(sheet, new CellLabelIterator(beginRow, beginColumn, endRow, endColumn))
     }
 
     AbstractCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
-        this.rows = new CellLabelIterator(beginCellLabel, endCellLabel).collect { row ->
+        this.list = extractList(sheet, new CellLabelIterator(beginCellLabel, endCellLabel))
+    }
+
+    private static extractList(sheet, iterator) {
+        return iterator.collect { row ->
             row.collect { label ->
-                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
+                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label), Cell.CELL_TYPE_BLANK)
             }
         }
     }
 
     boolean validate() {
-        rows.every { row ->
+        list.every { row ->
             row.every { cell ->
                 cell?.validate()
             }
@@ -52,22 +51,22 @@ abstract class AbstractCellRange implements Range {
 
     @Override
     boolean containsWithinBounds(Object o) {
-        rows.contains(o)
+        list.contains(o)
     }
 
     @Override
     Comparable getFrom() {
-        rows.first()
+        list.first()
     }
 
     @Override
     Comparable getTo() {
-        rows.tail()
+        list.tail()
     }
 
     @Override
     String inspect() {
-        "#$rows"
+        "#$list"
     }
 
     @Override
