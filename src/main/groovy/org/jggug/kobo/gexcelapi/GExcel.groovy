@@ -36,7 +36,8 @@ class GExcel {
         }
     }
 
-    private static expandSequentialCellRangeInstanceAsWildcardForRow(SequentialCellRange range) {
+    @Deprecated
+    private static expandSequentialCellRangeInstanceAsWildcardForRow(CellRange range) {
         range.metaClass.getProperty = { name ->
             if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
                 int columnIndex = CLU.columnIndex(name)
@@ -46,7 +47,8 @@ class GExcel {
         }
     }
 
-    private static expandSequentialCellRangeInstanceAsWildcardForColumn(SequentialCellRange range) {
+    @Deprecated
+    private static expandSequentialCellRangeInstanceAsWildcardForColumn(CellRange range) {
         range.metaClass.getProperty = { name ->
             if (name ==~ /_\d+/) { // wildcard for row
                 int rowIndex = CLU.rowIndex(name)
@@ -81,13 +83,13 @@ class GExcel {
                 if (name == "rows") { return rows() }
                 if (name ==~ /_\d+/) { // wildcard for row
                     def row = getRowFromSheetByLabel(delegate, name)
-                    def range = new SequentialCellRange(delegate, row.rowNum, row.getFirstCellNum(), row.rowNum, row.getLastCellNum() - 1)
+                    def range = CellRange.newSequentialCellRange(delegate, row.rowNum, row.getFirstCellNum(), row.rowNum, row.getLastCellNum() - 1)
                     expandSequentialCellRangeInstanceAsWildcardForRow(range)
                     return range
                 }
                 if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
                     int columnIndex = CLU.columnIndex(name)
-                    def range = new SequentialCellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
+                    def range = CellRange.newSequentialCellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
                     expandSequentialCellRangeInstanceAsWildcardForColumn(range)
                     return range
                 }
@@ -98,7 +100,7 @@ class GExcel {
                 }
                 if (name ==~ /([a-zA-Z]+\d+)_([a-zA-Z]+\d+)/) { // cells in a specified rectangle
                     def token = name.split("_")
-                    return new RectangleCellRange(delegate, token[0], token[1])
+                    return CellRange.newRectangleCellRange(delegate, token[0], token[1])
                 }
                 return delegate[name]
             }
@@ -121,7 +123,8 @@ class GExcel {
             getAt { int idx -> delegate.getCell(idx) }
             getProperty { name ->
                 if (name ==~ /[a-zA-Z]+_/) {
-                    return delegate.getCell(CLU.columnIndex(name))
+                    def cell = getCellFromRowByLabel(delegate, name)
+                    return cell
                 }
                 delegate[name]
             }

@@ -19,27 +19,48 @@ package org.jggug.kobo.gexcelapi
 import org.apache.poi.ss.usermodel.Sheet
 import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 
-abstract class CellRange implements Range {
+class CellRange implements Range {
 
     @Delegate
-    List<List> list
+    private List<List> list
 
-    CellLabelIterator cellLabelIterator
+    final Sheet sheet
+    final int beginRow, beginColumn, endRow, endColumn
 
-    CellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
+    static CellRange newSequentialCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
+        return new CellRange(sheet, beginRow, beginColumn, endRow, endColumn, true)
+    }
+
+    static CellRange newSequentialCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
+        return new CellRange(sheet, beginCellLabel, endCellLabel, true)
+    }
+
+    static CellRange newRectangleCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
+        return new CellRange(sheet, beginRow, beginColumn, endRow, endColumn, false)
+    }
+
+    static CellRange newRectangleCellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
+        return new CellRange(sheet, beginCellLabel, endCellLabel, false)
+    }
+
+    private CellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn, boolean flatten=false) {
+        this.sheet = sheet
+        this.beginRow = beginRow
+        this.beginColumn = beginColumn
+        this.endRow = endRow
+        this.endColumn = endColumn
         this.list = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect { row ->
             row.collect { label ->
                 sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
             }
         }
+        if (flatten) {
+            this.list = list.flatten() // to 1 dimension
+        }
     }
 
-    CellRange(Sheet sheet, String beginCellLabel, String endCellLabel) {
-        this.list = new CellLabelIterator(beginCellLabel, endCellLabel).collect { row ->
-            row.collect { label ->
-                sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
-            }
-        }
+    private CellRange(Sheet sheet, String beginCellLabel, String endCellLabel, boolean flatten=false) {
+        this(sheet, CLU.rowIndex(beginCellLabel), CLU.columnIndex(beginCellLabel), CLU.rowIndex(endCellLabel), CLU.columnIndex(endCellLabel), flatten)
     }
 
     boolean validate() {
