@@ -35,28 +35,6 @@ class GExcel {
         }
     }
 
-    @Deprecated
-    private static expandSequentialCellRangeInstanceAsWildcardForRow(CellRange range) {
-        range.metaClass.getProperty = { name ->
-            if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
-                int columnIndex = CLU.columnIndex(name)
-                return range[columnIndex]
-            }
-            return delegate[name]
-        }
-    }
-
-    @Deprecated
-    private static expandSequentialCellRangeInstanceAsWildcardForColumn(CellRange range) {
-        range.metaClass.getProperty = { name ->
-            if (name ==~ /_\d+/) { // wildcard for row
-                int rowIndex = CLU.rowIndex(name)
-                return range[rowIndex]
-            }
-            return delegate[name]
-        }
-    }
-
     private static getRowFromSheetByLabel(sheet, label) {
         int rowIndex = CLU.rowIndex(label)
         def row = sheet.getRow(rowIndex)
@@ -83,13 +61,11 @@ class GExcel {
                 if (name ==~ /_\d+/) { // wildcard for row
                     def row = getRowFromSheetByLabel(delegate, name)
                     def range = CellRange.newSequentialCellRange(delegate, row.rowNum, row.getFirstCellNum(), row.rowNum, row.getLastCellNum() - 1)
-                    expandSequentialCellRangeInstanceAsWildcardForRow(range)
                     return range
                 }
                 if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
                     int columnIndex = CLU.columnIndex(name)
                     def range = CellRange.newSequentialCellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
-                    expandSequentialCellRangeInstanceAsWildcardForColumn(range)
                     return range
                 }
                 if (name ==~ /[a-zA-Z]+\d+/) { // a specified cell

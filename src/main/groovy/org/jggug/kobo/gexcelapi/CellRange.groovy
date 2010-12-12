@@ -63,6 +63,18 @@ class CellRange implements Range {
         this(sheet, CLU.rowIndex(beginCellLabel), CLU.columnIndex(beginCellLabel), CLU.rowIndex(endCellLabel), CLU.columnIndex(endCellLabel), flatten)
     }
 
+    def getProperty(String name) {
+        if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
+            int columnIndex = CLU.columnIndex(name)
+            return this[columnIndex]
+        }
+        if (name ==~ /_\d+/) { // wildcard for row
+            int rowIndex = CLU.rowIndex(name)
+            return this[rowIndex]
+        }
+        return delegate[name]
+    }
+
     boolean validate() {
         list.every { row ->
             row.every { cell ->
