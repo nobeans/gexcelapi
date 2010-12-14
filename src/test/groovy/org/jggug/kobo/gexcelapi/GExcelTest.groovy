@@ -144,20 +144,14 @@ class GExcelTest extends GroovyTestCase {
     void testCellRange_wildcardOfRow() {
         assert sheet._1 == [sheet.A1, sheet.B1]
         assert sheet._1 in CellRange
-        assert sheet._1.A_ == sheet.A1
-        assert sheet._1.B_ == sheet.B1
 
         assert sheet._2 == [sheet.A2, sheet.B2]
         assert sheet._2 in CellRange
-        assert sheet._2.A_ == sheet.A2
-        assert sheet._2.B_ == sheet.B2
     }
 
     void testCellRange_wildcardOfColumn() {
         assert sheet.A_ in CellRange
         assert sheet.A_ == [sheet.A1, sheet.A2, sheet.A3, sheet.A4, sheet.A5, sheet.A6, sheet.A7]
-        assert sheet.A_._1 == sheet.A1
-        assert sheet.B_._3 == sheet.B3
     }
 
     void testRectangleCellRange() {
