@@ -236,5 +236,55 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.getRow(1).label == "2"
         assert sheet.getRow(2).label == "3"
     }
+
+    void testMergedRegion_getEnclosingMergedRegion() {
+        sheet = book[1] // having merged regions
+        assert sheet.getEnclosingMergedRegion(sheet.A1) == null
+        assert sheet.getEnclosingMergedRegion(sheet.B1) == null
+        assert sheet.getEnclosingMergedRegion(sheet.C1) == null
+
+        assert sheet.getEnclosingMergedRegion(sheet.A2).formatAsString() == "A2:C2"
+        assert sheet.getEnclosingMergedRegion(sheet.B2).formatAsString() == "A2:C2"
+        assert sheet.getEnclosingMergedRegion(sheet.C2).formatAsString() == "A2:C2"
+
+        assert sheet.getEnclosingMergedRegion(sheet.C3).formatAsString() == "C3:C5"
+        assert sheet.getEnclosingMergedRegion(sheet.C4).formatAsString() == "C3:C5"
+        assert sheet.getEnclosingMergedRegion(sheet.C5).formatAsString() == "C3:C5"
+
+        assert sheet.getEnclosingMergedRegion(sheet.A4).formatAsString() == "A4:B5"
+        assert sheet.getEnclosingMergedRegion(sheet.B4).formatAsString() == "A4:B5"
+        assert sheet.getEnclosingMergedRegion(sheet.A5).formatAsString() == "A4:B5"
+        assert sheet.getEnclosingMergedRegion(sheet.B5).formatAsString() == "A4:B5"
+    }
+
+    void testMergedRegion_width_height() {
+        sheet = book[1] // having merged regions
+        assert sheet.getEnclosingMergedRegion(sheet.A2).height == 1
+        assert sheet.getEnclosingMergedRegion(sheet.A2).width == 3
+
+        assert sheet.getEnclosingMergedRegion(sheet.C3).height == 3
+        assert sheet.getEnclosingMergedRegion(sheet.C3).width == 1
+
+        assert sheet.getEnclosingMergedRegion(sheet.A4).height == 2
+        assert sheet.getEnclosingMergedRegion(sheet.A4).width == 2
+    }
+
+    void testMergedRegion_isFirstCell() {
+        sheet = book[1] // having merged regions
+        assert sheet.getEnclosingMergedRegion(sheet.A2).isFirstCell(sheet.A2)
+        assert sheet.getEnclosingMergedRegion(sheet.A2).isFirstCell(sheet.B2) == false
+        assert sheet.getEnclosingMergedRegion(sheet.A2).isFirstCell(sheet.C2) == false
+        assert sheet.getEnclosingMergedRegion(sheet.A2).isFirstCell(sheet.D2) == false // out of the range
+
+        assert sheet.getEnclosingMergedRegion(sheet.C3).isFirstCell(sheet.C3)
+        assert sheet.getEnclosingMergedRegion(sheet.C3).isFirstCell(sheet.C4) == false
+        assert sheet.getEnclosingMergedRegion(sheet.C3).isFirstCell(sheet.C5) == false
+        assert sheet.getEnclosingMergedRegion(sheet.C3).isFirstCell(sheet.C6) == false // out of the range
+
+        assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.A4)
+        assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.B4) == false
+        assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.A5) == false
+        assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.B5) == false
+    }
 }
 

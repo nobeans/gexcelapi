@@ -17,6 +17,7 @@
 package org.jggug.kobo.gexcelapi
 
 import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.CellRangeAddress
 import org.jggug.kobo.gexcelapi.CellLabelUtils as CLU
 
 class GExcel {
@@ -26,6 +27,7 @@ class GExcel {
         expandSheet()
         expandRow()
         expandCell()
+        expandCellRangeAddress()
     }
 
     private static expandWorkbook() {
@@ -67,6 +69,15 @@ class GExcel {
             }
             rows { delegate?.findAll{true} }
             validate { delegate.rows.every { row -> row.validate() } }
+            getEnclosingMergedRegion { cell ->
+                for (int index : 0..<delegate.numMergedRegions) {
+                    def mergedRegion = delegate.getMergedRegion(index)
+                    if (mergedRegion.isInRange(cell.rowIndex, cell.columnIndex)) {
+                        return mergedRegion
+                    }
+                }
+                return null
+            }
         }
     }
 
@@ -134,6 +145,14 @@ class GExcel {
             validate {
                 delegate.validators.every { validator -> validator.call(delegate) }
             }
+        }
+    }
+
+    private static expandCellRangeAddress() {
+        CellRangeAddress.metaClass.define {
+            isFirstCell { cell -> (delegate.firstColumn == cell.columnIndex) && (delegate.firstRow == cell.rowIndex) }
+            getWidth { delegate.lastColumn - delegate.firstColumn + 1 }
+            getHeight { delegate.lastRow - delegate.firstRow + 1 }
         }
     }
 
