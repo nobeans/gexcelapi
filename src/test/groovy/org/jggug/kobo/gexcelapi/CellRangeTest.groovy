@@ -99,4 +99,36 @@ class CellRangeTest extends GroovyTestCase {
         assert new CellRange(sheet, 0, 0, 0, 2, true) == expected
     }
 
+    void testLabel() {
+        assert sheet.A1_B3.label == "A1:B3"
+        assert sheet.A1_A3.label == "A1:A3"
+        assert sheet.A1_C1.label == "A1:C1"
+    }
+
+    void testToHtml_A1_C1_withTitle() {
+        sheet = book[1] // having merged regions
+        def html = sheet.A1_C6.toHtml("test")
+        assert html =~ "<html>"
+        assert html =~ "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />"
+        assert html =~ "<title>test</title>"
+        // snip checking contents
+    }
+
+    void testToHtml_A1_C1_withoutTitle() {
+        sheet = book[1] // having merged regions
+        def html = sheet.A1_C6.toHtml()
+        assert html =~ "<html>"
+        assert html =~ "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />"
+        assert html =~ "<title>A1:C6 from Excel</title>"
+        // snip checking contents
+    }
+
+    void testToHtml_A1_C1_wichCharset() {
+        sheet = book[1] // having merged regions
+        def html = sheet.A1_C6.toHtml("test", "iso-8859-1")
+        assert html =~ "<html>"
+        assert html =~ "<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1' />"
+        assert html =~ "<title>test</title>"
+        // snip checking contents
+    }
 }

@@ -26,6 +26,7 @@ class CellRange implements Range {
 
     final Sheet sheet
     final int beginRow, beginColumn, endRow, endColumn
+    final String label
 
     static CellRange newSequentialCellRange(Sheet sheet, int beginRow, int beginColumn, int endRow, int endColumn) {
         return new CellRange(sheet, beginRow, beginColumn, endRow, endColumn, true)
@@ -49,6 +50,7 @@ class CellRange implements Range {
         this.beginColumn = beginColumn
         this.endRow = endRow
         this.endColumn = endColumn
+        this.label = "${CLU.cellLabel(beginRow, beginColumn)}:${CLU.cellLabel(endRow, endColumn)}"
         this.list = new CellLabelIterator(beginRow, beginColumn, endRow, endColumn).collect { row ->
             row.collect { label ->
                 sheet[label] ?: sheet.createRow(CLU.rowIndex(label)).createCell(CLU.columnIndex(label))
@@ -69,6 +71,10 @@ class CellRange implements Range {
                 cell?.validate()
             }
         }
+    }
+
+    String toHtml(String title = "$label from Excel", String charset = "UTF-8") {
+        new CellRangeToHtmlConverter(this).toHtml(title, charset)
     }
 
     @Override
