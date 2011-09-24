@@ -79,7 +79,10 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A5.value == true
         assert sheet.A6.value == false
 
-        assert sheet.A7.value == "1+1"
+        // if you want to get result of formula cell, you can use the dedicated accessor
+        // method of POI, like getNumericCellValue().
+        assert sheet.A7.numericCellValue == 2
+        assert sheet.A7.value == "1+1" // if you wan to get the formula, you can use 'value'.
     }
 
     void testAccessCellsOfSomeTypes_asType() {
