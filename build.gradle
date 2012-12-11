@@ -67,7 +67,7 @@ uploadArchives {
         if (mavenDeployRepoId) {
             repository url: getProperty("mavenDeployRepo.${mavenDeployRepoId}")
         } else {
-            repository url: getProperty("mavenDeployRepo")
+            repository url: mavenDeployRepo
         }
 
         // License
