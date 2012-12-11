@@ -27,10 +27,6 @@ dependencies {
     testCompile 'junit:junit:4.+'
 }
 
-sourceSets {
-    test.output.resourcesDir = 'build/classes/test'
-}
-
 def defaultEncoding = 'UTF-8'
 compileJava {
     options.encoding = defaultEncoding
