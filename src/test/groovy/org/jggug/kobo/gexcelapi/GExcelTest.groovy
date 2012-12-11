@@ -73,7 +73,7 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A3.value.intValue() in Integer // method to get int value
 
         // it cannot implicitly accessing value, so explicitly access.
-        assert sheet.A4.dateCellValue as String == "Thu Oct 22 00:00:00 JST 2009"
+        assert sheet.A4.dateCellValue.format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("JST")) == "2009-10-22 00:00:00"
         assert sheet.A4.dateCellValue in java.util.Date
 
         assert sheet.A5.value == true
@@ -97,7 +97,7 @@ class GExcelTest extends GroovyTestCase {
         assert (sheet.A3 as Integer) == 1234
         assert (sheet.A3 as Integer) in Integer
 
-        assert (sheet.A4 as Date) as String == "Thu Oct 22 00:00:00 JST 2009"
+        assert (sheet.A4 as Date).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("JST")) == "2009-10-22 00:00:00"
         assert (sheet.A4 as Date) in java.util.Date
 
         assert (sheet.A5 as Boolean) == true
