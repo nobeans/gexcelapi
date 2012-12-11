@@ -17,14 +17,19 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
+defaultTasks 'clean', 'test'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    groovy 'org.codehaus.groovy:groovy:1.7.5'
-    compile 'org.apache.poi:poi-ooxml:3.7'
-    testCompile 'junit:junit:4.+'
+    groovy 'org.codehaus.groovy:groovy-all:2.0.5'
+    compile 'org.apache.poi:poi-ooxml:3.8'
+    testCompile 'junit:junit:4.11'
 }
 
 def defaultEncoding = 'UTF-8'
