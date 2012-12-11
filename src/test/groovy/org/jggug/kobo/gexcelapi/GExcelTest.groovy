@@ -18,7 +18,7 @@ package org.jggug.kobo.gexcelapi
 
 class GExcelTest extends GroovyTestCase {
 
-    def sampleFile = "build/classes/test/sample.xls"
+    def sampleFile = "build/resources/test/sample.xls"
     def book
     def sheet
 
