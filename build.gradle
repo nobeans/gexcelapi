@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.0.5'
+    compile 'org.codehaus.groovy:groovy-all:2.1.2'
     compile 'org.apache.poi:poi-ooxml:3.8'
     testCompile 'junit:junit:4.11'
 }
