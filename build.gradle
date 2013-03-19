@@ -26,10 +26,15 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    deployerJars
+}
+
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.1.2'
     compile 'org.apache.poi:poi-ooxml:3.9'
     testCompile 'junit:junit:4.11'
+    deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.2'
 }
 
 def defaultEncoding = 'UTF-8'
@@ -38,25 +43,13 @@ tasks.withType(GroovyCompile) each { it.groovyOptions.encoding = defaultEncoding
 
 uploadArchives {
     repositories.mavenDeployer {
-        //
-        // If you want to deploy it, set an entry which has a key of 'mavenDeployRepo'
-        // e.g.) In $HOME/.gradle/gradle.properties:
-        //     mavenDeployRepo  = file://localhost/<YOUR_MAVEN_REPO_FULL_PATH>
-        //
-        // If you want to choose some repo, set some entries which have keys started with 'mavenDeployRepo.'.
-        // e.g.) In $HOME/.gradle/gradle.properties:
-        //     mavenDeployRepo.release  = file://localhost/<YOUR_MAVEN_REPO_RELEASE_FULL_PATH>
-        //     mavenDeployRepo.snapshot = file://localhost/<YOUR_MAVEN_REPO_SNAPSHOT_FULL_PATH>
-        // And you execute gradle in command line:
-        // e.g.)
-        //     $ gradle uploadArchives -Dmaven.deploy.repo=snapshot
-        //
-        def mavenDeployRepoId = System.properties["maven.deploy.repo"]
-        if (mavenDeployRepoId) {
-            repository url: getProperty("mavenDeployRepo.${mavenDeployRepoId}")
-        } else {
-            repository url: mavenDeployRepo
+        configuration = configurations.deployerJars
+
+        def configureAuth = {
+            authentication(userName: cloudbeesUsername, password: cloudbeesPassword)
         }
+        snapshotRepository(url: "https://repository-${cloudbeesUsername}.forge.cloudbees.com/snapshot", configureAuth)
+        repository(url: "https://repository-${cloudbeesUsername}.forge.cloudbees.com/release", configureAuth)
 
         // License
         pom.project {
