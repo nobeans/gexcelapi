@@ -21,7 +21,7 @@ class CellLabelUtils {
     private static final int ORIGIN = ('A' as char) as int
     private static final int RADIX = 26
 
-    private static convertColLabelToNumber(ascii) {
+    static convertColLabelToNumber(ascii) {
         def num = 0
         ascii.toUpperCase().reverse().eachWithIndex { ch, i ->
             def delta = ((ch as char) as int) - ORIGIN + 1
