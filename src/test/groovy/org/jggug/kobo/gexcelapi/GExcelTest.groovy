@@ -210,7 +210,6 @@ class GExcelTest extends GroovyTestCase {
     }
 
     void testLabel_forCell() {
-        println sheet.A1
         assert sheet.A1.label == "A1"
         assert sheet.A2.label == "A2"
         assert sheet.A3.label == "A3"
