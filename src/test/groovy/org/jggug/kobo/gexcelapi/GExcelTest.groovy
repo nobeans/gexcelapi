@@ -25,6 +25,10 @@ class GExcelTest extends GroovyTestCase {
     void setUp() {
         book = GExcel.open(sampleFile)
         sheet = book[0]
+
+        // dateCellValue is affected by TimeZone.
+        // So it should be explicitly set as GMT in order to avoid causing a failure dependent on an environment.
+        TimeZone.default = TimeZone.getTimeZone("GMT")
     }
 
     void tearDown() {
@@ -73,7 +77,8 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A3.value.intValue() in Integer // method to get int value
 
         // it cannot implicitly accessing value, so explicitly access.
-        assert sheet.A4.dateCellValue.format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("JST")) == "2009-10-22 00:00:00"
+        assert sheet.A4.dateCellValue.format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) == "2009-10-22 00:00:00"
+        assert sheet.A4.dateCellValue.format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("JST")) == "2009-10-22 09:00:00"
         assert sheet.A4.dateCellValue in java.util.Date
 
         assert sheet.A5.value == true
@@ -89,7 +94,7 @@ class GExcelTest extends GroovyTestCase {
         assert (sheet.A1 as String) == "Sheet1-A1"
         assert (sheet.A1 as String) in String
 
-        assert (sheet.A2 as String)  == "あいうえお"
+        assert (sheet.A2 as String) == "あいうえお"
         assert (sheet.A2 as String) in String
 
         assert (sheet.A3 as Double) == 1234.0
@@ -97,7 +102,8 @@ class GExcelTest extends GroovyTestCase {
         assert (sheet.A3 as Integer) == 1234
         assert (sheet.A3 as Integer) in Integer
 
-        assert (sheet.A4 as Date).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("JST")) == "2009-10-22 00:00:00"
+        assert (sheet.A4 as Date).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) == "2009-10-22 00:00:00"
+        assert (sheet.A4 as Date).format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("JST")) == "2009-10-22 09:00:00"
         assert (sheet.A4 as Date) in java.util.Date
 
         assert (sheet.A5 as Boolean) == true
