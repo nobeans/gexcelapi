@@ -78,6 +78,15 @@ class GExcel {
                 }
                 return null
             }
+			findEmptyRow { int startPos ->
+				Row targetRow = delegate.find { Row row ->
+					row.rowNum >= startPos - 1 && row.getCell(0)?.value == null }
+				if (!targetRow) {
+					return delegate.createRow(delegate.lastRowNum+1)
+				}
+				
+				return targetRow
+			}
         }
     }
 

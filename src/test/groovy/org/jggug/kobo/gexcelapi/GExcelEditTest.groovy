@@ -1,5 +1,6 @@
 package org.jggug.kobo.gexcelapi
 
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 
@@ -22,7 +23,7 @@ class GExcelEditTest extends GroovyTestCase {
     void tearDown() {
         book = null
         sheet = null
-		outputFile.delete()
+//		outputFile.delete()
     }
 
 	void testWrite() {
@@ -39,4 +40,21 @@ class GExcelEditTest extends GroovyTestCase {
 		assert sheet.B2 == targetSheet.B2
 	}
 
+	void testFindEmptyRow() {
+		Row emptyRow = sheet.findEmptyRow(1);
+		assert emptyRow != null
+		assert emptyRow.getCell(0) == null
+	}
+	
+	void testAddRow() {
+		Row emptyRow = sheet.findEmptyRow(1);
+		emptyRow.createCell(0).value = "hello"
+		
+		outputFile.withOutputStream {
+			book.write(it)
+		}
+		Workbook targetBook = GExcel.open(outputFile)
+		Sheet targetSheet = book[0]
+		assert targetSheet.A8.value == "hello"
+	}
 }
