@@ -78,9 +78,9 @@ class GExcel {
                 }
                 return null
             }
-			findEmptyRow { int startPos ->
+			findEmptyRow { label ->
 				Row targetRow = delegate.find { Row row ->
-					row.rowNum >= startPos - 1 && row.getCell(0)?.value == null }
+					row.rowNum >= CLU.rowIndex(label) && row.getCell(CLU.columnIndex(label))?.value == null }
 				if (!targetRow) {
 					return delegate.createRow(delegate.lastRowNum+1)
 				}
