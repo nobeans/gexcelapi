@@ -90,4 +90,37 @@ class GExcelEditTest extends GroovyTestCase {
 		assert resultRow.getCell(7) == sheet.H6
 	}
 	
+	void testFindByCellValue4() {
+		//数値検索
+		Row resultRow = sheet.findByCellValue('I4', 20);
+		assert resultRow != null
+		assert resultRow.label == "5"  // labelプロパティは、Excel行番号と一致
+		assert resultRow.I_.value == 20
+		assert resultRow.getCell(8) == sheet.I5
+	}
+	
+	void testFindAllByCellValue1() {
+		def resultRows = sheet.findAllByCellValue('D4', 'B');
+		assert resultRows[0].label == "5"
+		assert resultRows[0].D_.value == "B"
+		assert resultRows[1].label == "6"
+		assert resultRows[1].D_.value == "B"
+	}
+	
+	void testFindAllByCellValue2() {
+		def resultRows = sheet.findAllByCellValue('C4', '変更');
+		assert resultRows[0].label == "5"
+		assert resultRows[0].C_.value == "仕様変更"
+		assert resultRows[1].label == "7"
+		assert resultRows[1].C_.value == "仕様変更"
+	}
+	
+	void testFindAllByCellValue3() {
+		//数値検索
+		def resultRows = sheet.findAllByCellValue('I4', 10);
+		assert resultRows[0].label == "7"
+		assert resultRows[0].I_.value == 10
+		assert resultRows[1].label == "8"
+		assert resultRows[1].I_.value == 10
+	}
 }
