@@ -41,14 +41,14 @@ class GExcelEditTest extends GroovyTestCase {
 	void testFindEmptyRow1() {
 		Row emptyRow = sheet.findEmptyRow('A2');
 		assert emptyRow != null
-		assert emptyRow.rowNum == 10 //　Rowクラスの行番号は0 始まり
+		assert emptyRow.label == "11"  // labelプロパティは、Excel行番号と一致
 		assert emptyRow.getCell(0)?.value == null
 	}
 
 	void testFindEmptyRow2() {
 		Row emptyRow = sheet.findEmptyRow('B3');
 		assert emptyRow != null
-		assert emptyRow.rowNum == 8 //　Rowクラスの行番号は0 始まり
+		assert emptyRow.label == "9"  // labelプロパティは、Excel行番号と一致
 		assert emptyRow.getCell(1)?.value == null
 	}
 
@@ -63,4 +63,31 @@ class GExcelEditTest extends GroovyTestCase {
 		assert targetSheet.A11.value == "100"
 		assert targetSheet.B11.value == "test"
 	}
+
+	void testFindByCellValue1() {
+		Row resultRow = sheet.findByCellValue('F4', '田中');
+		assert resultRow != null
+		assert resultRow.label == "7"  // labelプロパティは、Excel行番号と一致
+		assert resultRow.F_.value == "田中"
+		assert resultRow.getCell(5) == sheet.F7
+	}
+	
+	void testFindByCellValue2() {
+		//前方一致
+		Row resultRow = sheet.findByCellValue('C4', '機能');
+		assert resultRow != null
+		assert resultRow.label == "4"  // labelプロパティは、Excel行番号と一致
+		assert resultRow.C_.value == "機能追加"
+		assert resultRow.getCell(2) == sheet.C4
+	}
+
+	void testFindByCellValue3() {
+		//後方一致
+		Row resultRow = sheet.findByCellValue('H6', '済');
+		assert resultRow != null
+		assert resultRow.label == "6"  // labelプロパティは、Excel行番号と一致
+		assert resultRow.H_.value == "対応済"
+		assert resultRow.getCell(7) == sheet.H6
+	}
+	
 }
