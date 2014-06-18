@@ -87,16 +87,6 @@ class GExcel {
 				
 				return targetRow
 			}
-			findByCellValue { label, cellValue ->
-				int cellIndex = CLU.columnIndex(label)
-				delegate.find { Row row ->
-					//行を取得する条件
-					row.rowNum >= CLU.rowIndex(label) &&
-					row.getCell(cellIndex)?.value &&
-					row.getCell(cellIndex).isStringType() &&
-					row.getCell(cellIndex).value.contains(cellValue)
-				}
-			}
         }
     }
 
