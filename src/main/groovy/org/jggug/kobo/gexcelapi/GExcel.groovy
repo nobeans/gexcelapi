@@ -88,12 +88,14 @@ class GExcel {
 				return targetRow
 			}
 			findByCellValue { label, cellValue ->
-				def condition = createCondition(label, cellValue)
-				delegate.find(condition)
-			}
-			findAllByCellValue { label, cellValue ->
-				def condition = createCondition(label, cellValue)
-				delegate.findAll(condition)
+				int cellIndex = CLU.columnIndex(label)
+				delegate.find { Row row ->
+					//行を取得する条件
+					row.rowNum >= CLU.rowIndex(label) &&
+					row.getCell(cellIndex)?.value &&
+					row.getCell(cellIndex).isStringType() &&
+					row.getCell(cellIndex).value.contains(cellValue)
+				}
 			}
         }
     }
@@ -172,30 +174,6 @@ class GExcel {
             getHeight { delegate.lastRow - delegate.firstRow + 1 }
         }
     }
-
-	private static createCondition(String label, String cellValue) {
-		int cellIndex = CLU.columnIndex(label)
-		def condition = { Row row ->
-			//行を取得する条件
-			row.rowNum >= CLU.rowIndex(label) &&
-			row.getCell(cellIndex)?.value &&
-			row.getCell(cellIndex).isStringType() &&
-			row.getCell(cellIndex).value.contains(cellValue)
-		}
-		return condition
-	}
-
-	private static createCondition(String label, Integer cellValue) {
-		int cellIndex = CLU.columnIndex(label)
-		def condition = { Row row ->
-			//行を取得する条件
-			row.rowNum >= CLU.rowIndex(label) &&
-			row.getCell(cellIndex)?.value &&
-			row.getCell(cellIndex).isNumericType()  &&
-			row.getCell(cellIndex).value == cellValue
-		}
-		return condition
-	}
 
     private static getRowFromSheetByLabel(sheet, label) {
         int rowIndex = CLU.rowIndex(label)
