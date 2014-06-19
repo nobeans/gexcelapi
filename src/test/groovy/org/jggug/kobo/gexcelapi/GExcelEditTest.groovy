@@ -41,14 +41,14 @@ class GExcelEditTest extends GroovyTestCase {
     void testFindEmptyRow1() {
         Row emptyRow = sheet.findEmptyRow('A2');
         assert emptyRow != null
-        assert emptyRow.rowNum == 10 //　Rowクラスの行番号は0 始まり
+        assert emptyRow.rowNum == 10 //　rowNum start　0
         assert emptyRow.getCell(0)?.value == null
     }
 
     void testFindEmptyRow2() {
         Row emptyRow = sheet.findEmptyRow('B3');
         assert emptyRow != null
-        assert emptyRow.rowNum == 8 //　Rowクラスの行番号は0 始まり
+        assert emptyRow.rowNum == 8 //　rowNum start　0
         assert emptyRow.getCell(1)?.value == null
     }
 
