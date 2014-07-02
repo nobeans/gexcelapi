@@ -19,12 +19,17 @@ package org.jggug.kobo.gexcelapi
 class GExcelTest extends GroovyTestCase {
 
     def sampleFile = "build/resources/test/sample.xls"
+    def outputPath = "output.xls"
+    def outputFile
     def book
     def sheet
+    def sheet5
 
     void setUp() {
         book = GExcel.open(sampleFile)
         sheet = book[0]
+        sheet5 = book["Sheet5"]
+        outputFile = new File(outputPath)
 
         // dateCellValue is affected by TimeZone.
         // So it should be explicitly set as GMT in order to avoid causing a failure dependent on an environment.
@@ -34,6 +39,8 @@ class GExcelTest extends GroovyTestCase {
     void tearDown() {
         book = null
         sheet = null
+        sheet5 = null
+        outputFile.delete()
     }
 
     void testOpen() {
@@ -293,6 +300,62 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.B4) == false
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.A5) == false
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.B5) == false
+    }
+
+    void testFindByCellValue() {
+        def resultRow = sheet5.findByCellValue('F4', 'Ken');
+        assert resultRow != null
+        assert resultRow.label == "7"  // label equals line number on excel
+        assert resultRow.F_.value == "Ken"
+        assert resultRow.getCell(5) == sheet5.F7
+    }
+
+    void testFindByCellValuePrefixMatch() {
+        def resultRow = sheet5.findByCellValue('C4', 'Add');
+        assert resultRow != null
+        assert resultRow.label == "4"  // label equals line number on excel
+        assert resultRow.C_.value == "Add Feature"
+        assert resultRow.getCell(2) == sheet5.C4
+    }
+
+    void testFindByCellValueSuffixMatch() {
+        def resultRow = sheet5.findByCellValue('H6', 'ed');
+        assert resultRow != null
+        assert resultRow.label == "6"  // label equals line number on excel
+        assert resultRow.H_.value == "Closed"
+        assert resultRow.getCell(7) == sheet5.H6
+    }
+
+    void testFindByCellValueNumberMatch() {
+        def resultRow = sheet5.findByCellValue('I4', 20);
+        assert resultRow != null
+        assert resultRow.label == "5"  // label equals line number on excel
+        assert resultRow.I_.value == 20
+        assert resultRow.getCell(8) == sheet5.I5
+    }
+
+    void testFindAllByCellValue() {
+        def resultRows = sheet5.findAllByCellValue('D4', 'B');
+        assert resultRows[0].label == "5"
+        assert resultRows[0].D_.value == "B"
+        assert resultRows[1].label == "6"
+        assert resultRows[1].D_.value == "B"
+    }
+
+    void testFindAllByCellValuePrefixMatch() {
+        def resultRows = sheet5.findAllByCellValue('C4', 'Spec');
+        assert resultRows[0].label == "5"
+        assert resultRows[0].C_.value == "Spec Change"
+        assert resultRows[1].label == "7"
+        assert resultRows[1].C_.value == "Spec Change"
+    }
+
+    void testFindAllByCellValueNumberMatch() {
+        def resultRows = sheet5.findAllByCellValue('I4', 10);
+        assert resultRows[0].label == "7"
+        assert resultRows[0].I_.value == 10
+        assert resultRows[1].label == "8"
+        assert resultRows[1].I_.value == 10
     }
 }
 

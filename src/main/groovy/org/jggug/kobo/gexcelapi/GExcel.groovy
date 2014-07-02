@@ -78,6 +78,14 @@ class GExcel {
                 }
                 return null
             }
+            findByCellValue { label, cellValue ->
+                def condition = createCondition(label, cellValue)
+                delegate.find(condition)
+            }
+            findAllByCellValue { label, cellValue ->
+                def condition = createCondition(label, cellValue)
+                delegate.findAll(condition)
+            }
         }
     }
 
@@ -154,6 +162,50 @@ class GExcel {
             getWidth { delegate.lastColumn - delegate.firstColumn + 1 }
             getHeight { delegate.lastRow - delegate.firstRow + 1 }
         }
+    }
+
+    private static createCondition(String label, String cellValue) {
+        int cellIndex = CLU.columnIndex(label)
+        def condition = { Row row ->
+            if (row.rowNum < CLU.rowIndex(label)) {
+                return false
+            }
+
+            Cell cell = row.getCell(cellIndex)
+            if (cell == null) {
+                return false
+            }
+            if (cell.value == null) {
+                return false
+            }
+            if (!cell.isStringType()) {
+                return false
+            }
+            cell.value.contains(cellValue)
+        }
+        return condition
+    }
+
+    private static createCondition(String label, Integer cellValue) {
+        int cellIndex = CLU.columnIndex(label)
+        def condition = { Row row ->
+            if (row.rowNum < CLU.rowIndex(label)) {
+                return false
+            }
+
+            Cell cell = row.getCell(cellIndex)
+            if (cell == null) {
+                return false
+            }
+            if (cell.value == null) {
+                return false
+            }
+            if (!cell.isNumericType()) {
+                return false
+            }
+            cell.value == cellValue
+        }
+        return condition
     }
 
     private static getRowFromSheetByLabel(sheet, label) {
