@@ -19,12 +19,17 @@ package org.jggug.kobo.gexcelapi
 class GExcelTest extends GroovyTestCase {
 
     def sampleFile = "build/resources/test/sample.xls"
+    def outputPath = "output.xls"
+    def outputFile
     def book
     def sheet
+    def sheet4
 
     void setUp() {
         book = GExcel.open(sampleFile)
         sheet = book[0]
+        sheet4 = book[3]
+        outputFile = new File(outputPath)
 
         // dateCellValue is affected by TimeZone.
         // So it should be explicitly set as GMT in order to avoid causing a failure dependent on an environment.
@@ -34,6 +39,8 @@ class GExcelTest extends GroovyTestCase {
     void tearDown() {
         book = null
         sheet = null
+        sheet4 = null
+        outputFile.delete()
     }
 
     void testOpen() {
@@ -293,6 +300,32 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.B4) == false
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.A5) == false
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.B5) == false
+    }
+
+    void testFindEmptyRowFormulaValueColumn() {
+        def emptyRow = sheet4.findEmptyRow('A2');
+        assert emptyRow != null
+        assert emptyRow.rowNum == 10 //　rowNum start　0
+        assert emptyRow.getCell(0)?.value == null
+    }
+
+    void testFindEmptyRowValueColumn() {
+        def emptyRow = sheet4.findEmptyRow('B3');
+        assert emptyRow != null
+        assert emptyRow.rowNum == 8 //　rowNum start　0
+        assert emptyRow.getCell(1)?.value == null
+    }
+
+    void testAddRow() {
+        def emptyRow = sheet4.findEmptyRow('A2');
+        emptyRow.createCell(0).value = "100"
+        emptyRow.createCell(1).value = "test"
+
+        outputFile.withOutputStream { book.write(it) }
+        def targetBook = GExcel.open(outputFile)
+        def targetSheet = targetBook[3]
+        assert targetSheet.A11.value == "100"
+        assert targetSheet.B11.value == "test"
     }
 }
 
