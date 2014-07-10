@@ -1,0 +1,6 @@
+repositories {
+    jcenter()
+}
+dependencies {
+    classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5"
+}
