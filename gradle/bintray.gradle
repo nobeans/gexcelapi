@@ -1,0 +1,67 @@
+/*
+ * Copyright 2014 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task groovydocJar(type: Jar) {
+    classifier = 'javadoc'
+    from groovydoc
+}
+
+artifacts {
+    archives sourceJar
+    archives groovydocJar
+}
+
+publishing {
+    publications {
+        deployment(MavenPublication) {
+            from components.java
+
+            artifact sourceJar
+            artifact groovydocJar
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : null
+    key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : null
+    publications = ['deployment']
+    pkg {
+        repo = 'maven'
+        name = 'gexcelapi'
+        desc = 'GExcelAPI is a thin wrapper library powered by Groovy of Apache POI, not JExcelAPI.'
+        websiteUrl = 'https://github.com/nobeans/gexcelapi'
+        issueTrackerUrl = 'https://github.com/nobeans/gexcelapi/issues'
+        vcsUrl = 'https://github.com/nobeans/gexcelapi.git'
+        licenses = ['Apache-2.0']
+        labels = ['groovy']
+        version {
+            name = "${project.version}"
+            vcsTag = "v${project.version}"
+        }
+    }
+    dryRun = Boolean.valueOf(System.getProperty("bintray.dryRun") ?: false)
+}
+
+bintrayUpload.dependsOn build

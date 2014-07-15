@@ -15,9 +15,8 @@
  */
 
 apply plugin: 'groovy'
-apply plugin: 'maven'
 
-defaultTasks 'clean', 'test'
+defaultTasks 'clean', 'build'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -29,7 +28,9 @@ buildscript {
     dependencies {
         classpath 'org.fusesource.jansi:jansi:1.11'
     }
+    apply from: file('gradle/buildscript.gradle'), to: buildscript
 }
+apply from: file('gradle/bintray.gradle')
 
 repositories {
     mavenCentral()
@@ -43,40 +44,16 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.1.2'
     compile 'org.apache.poi:poi-ooxml:3.9'
     testCompile 'junit:junit:4.11'
-    deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.2'
 }
 
 def defaultEncoding = 'UTF-8'
 tasks.withType(AbstractCompile) each { it.options.encoding = defaultEncoding }
 tasks.withType(GroovyCompile) each { it.groovyOptions.encoding = defaultEncoding }
 
-uploadArchives {
-    repositories.mavenDeployer {
-        configuration = configurations.deployerJars
-
-        def configureAuth = {
-            authentication(userName: cloudbeesUsername, password: cloudbeesPassword)
-        }
-        snapshotRepository(url: "https://repository-${cloudbeesUsername}.forge.cloudbees.com/snapshot", configureAuth)
-        repository(url: "https://repository-${cloudbeesUsername}.forge.cloudbees.com/release", configureAuth)
-
-        // License
-        pom.project {
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                }
-            }
-        }
-    }
-}
-
 // Common configuration for unitTest and integrationTest
 tasks.withType(Test) each {
     // show standard out and standard error of the test JVM(s) on the console
     it.testLogging.showStandardStreams = true
-
 
     it.beforeTest { desc ->
         AnsiColor.printlnAsTestResult """ - (${desc.className}) "${desc.name}" => """, true
