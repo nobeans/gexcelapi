@@ -67,7 +67,7 @@ class GExcel {
                 }
                 delegate[name] = value
             }
-            rows { delegate?.findAll{true} }
+            rows { delegate?.findAll { true } }
             validate { delegate.rows.every { row -> row.validate() } }
             getEnclosingMergedRegion { cell ->
                 for (int index : 0..<delegate.numMergedRegions) {
@@ -80,11 +80,11 @@ class GExcel {
             }
             findEmptyRow { label ->
                 Row targetRow = delegate.find { Row row ->
-                    row.rowNum >= CLU.rowIndex(label) && row.getCell(CLU.columnIndex(label))?.value == null }
-                if (!targetRow) {
-                    return delegate.createRow(delegate.lastRowNum+1)
+                    row.rowNum >= CLU.rowIndex(label) && row.getCell(CLU.columnIndex(label))?.value == null
                 }
-                
+                if (!targetRow) {
+                    return delegate.createRow(delegate.lastRowNum + 1)
+                }
                 return targetRow
             }
             findByCellValue { label, cellValue ->
@@ -115,16 +115,16 @@ class GExcel {
     private static expandCell() {
         Cell.metaClass.__validators__ = null
         Cell.metaClass.define {
-            isStringType  { delegate.cellType == Cell.CELL_TYPE_STRING }
+            isStringType { delegate.cellType == Cell.CELL_TYPE_STRING }
             isNumericType { delegate.cellType == Cell.CELL_TYPE_NUMERIC }
             isBooleanType { delegate.cellType == Cell.CELL_TYPE_BOOLEAN }
             getValue {
                 // implicitly accessing value by appropriate type
-                switch(delegate.cellType) {
+                switch (delegate.cellType) {
                     case Cell.CELL_TYPE_NUMERIC: return delegate.numericCellValue
-                    case Cell.CELL_TYPE_STRING:  return delegate.stringCellValue
+                    case Cell.CELL_TYPE_STRING: return delegate.stringCellValue
                     case Cell.CELL_TYPE_FORMULA: return delegate.cellFormula
-                    case Cell.CELL_TYPE_BLANK:   return null
+                    case Cell.CELL_TYPE_BLANK: return null
                     case Cell.CELL_TYPE_BOOLEAN: return delegate.booleanCellValue
                     default: throw new RuntimeException("unsupported cell type: ${delegate.cellType}")
                 }
@@ -133,12 +133,12 @@ class GExcel {
             leftShift { value -> delegate.setCellValue(value) }
             asType { Class type ->
                 // explicitly accessing value by appropriate type
-                switch(type) {
-                    case Double:  return delegate.numericCellValue
+                switch (type) {
+                    case Double: return delegate.numericCellValue
                     case Integer: return delegate.numericCellValue.intValue()
                     case Boolean: return delegate.booleanCellValue
-                    case Date:    return delegate.dateCellValue
-                    case String:  return delegate.stringCellValue
+                    case Date: return delegate.dateCellValue
+                    case String: return delegate.stringCellValue
                     default: throw new RuntimeException("unsupported cell type: ${delegate.cellType}")
                 }
             }
@@ -237,7 +237,9 @@ class GExcel {
     }
 
     static open(String file) { open(new File(file)) }
+
     static open(File file) { open(new FileInputStream(file)) }
+
     static open(InputStream is) { WorkbookFactory.create(is) }
 }
 
