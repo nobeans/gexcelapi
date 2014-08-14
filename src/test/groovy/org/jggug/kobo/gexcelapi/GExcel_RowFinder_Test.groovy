@@ -26,6 +26,45 @@ class GExcel_RowFinder_Test extends GroovyTestCase {
         sheet = book[3]
     }
 
+    void testFind() {
+        def resultRow = sheet.find { row ->
+            (row.label.toInteger() >= 4) && (row.F_.value == "Ken")
+        }
+        assert resultRow.label == "7"
+        assert resultRow.F_.value == "Ken"
+    }
+
+    void testFind_prefixMatch() {
+        def resultRow = sheet.find { row ->
+            (row.label.toInteger() >= 4) && row.C_.value?.startsWith("Add")
+        }
+        assert resultRow.label == "4"
+        assert resultRow.C_.value == "Add Feature"
+    }
+
+    void testFind_empty() {
+        def resultRow = sheet.find { row ->
+            (row.label.toInteger() >= 2) && !row.A_.value
+        }
+        assert resultRow.label == "11"
+    }
+
+    void testFindAll() {
+        def resultRows = sheet.findAll { row ->
+            (row.label.toInteger() >= 4) && row.C_.value?.contains("Spec")
+        }
+        assert resultRows*.label == ["5", "7"]
+        assert resultRows.every { it.C_.value == "Spec Change" }
+    }
+
+    void testNewLastRow() {
+        // Do this if you want new last row (e.g. when your row finder method call would return null.)
+        def resultRow = sheet.createRow(sheet.lastRowNum + 1)
+        assert resultRow.label == "13"
+    }
+    
+    //----------------------------------
+
     void testFindRowByCellValue() {
         def resultRow = sheet.findRowByCellValue('F4', 'Ken')
         assert resultRow.label == "7"
