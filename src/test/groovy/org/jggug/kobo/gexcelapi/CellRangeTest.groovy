@@ -18,17 +18,13 @@ package org.jggug.kobo.gexcelapi
 
 class CellRangeTest extends GroovyTestCase {
 
-    def sampleFile = "build/resources/test/sample.xls"
-    def book, sheet
+    def sampleFile = "build/resources/test/GExcel_BasicOperations_Test-input.xls"
+    def book
+    def sheet
 
     void setUp() {
         book = GExcel.open(sampleFile)
         sheet = book[0]
-    }
-
-    void tearDown() {
-        book = null
-        sheet = null
     }
 
     void testRectangle_A1_B3() {
@@ -123,7 +119,7 @@ class CellRangeTest extends GroovyTestCase {
         // snip checking contents
     }
 
-    void testToHtml_A1_C1_wichCharset() {
+    void testToHtml_A1_C1_withCharset() {
         sheet = book[1] // having merged regions
         def html = sheet.A1_C6.toHtml("test", "iso-8859-1")
         assert html =~ "<html>"

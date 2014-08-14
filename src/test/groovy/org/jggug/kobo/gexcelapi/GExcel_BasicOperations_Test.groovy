@@ -16,19 +16,17 @@
 
 package org.jggug.kobo.gexcelapi
 
-class GExcelTest extends GroovyTestCase {
+class GExcel_BasicOperations_Test extends GroovyTestCase {
 
-    def sampleFile = "build/resources/test/sample.xls"
+    def sampleFile = "build/resources/test/GExcel_BasicOperations_Test-input.xls"
     def outputPath = "output.xls"
     def outputFile
     def book
     def sheet
-    def sheetForFindRowTest
 
     void setUp() {
         book = GExcel.open(sampleFile)
         sheet = book[0]
-        sheetForFindRowTest = book[3]
         outputFile = new File(outputPath)
 
         // dateCellValue is affected by TimeZone.
@@ -39,7 +37,6 @@ class GExcelTest extends GroovyTestCase {
     void tearDown() {
         book = null
         sheet = null
-        sheetForFindRowTest = null
         outputFile.delete()
     }
 
@@ -300,88 +297,6 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.B4) == false
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.A5) == false
         assert sheet.getEnclosingMergedRegion(sheet.A4).isFirstCell(sheet.B5) == false
-    }
-
-    void testFindEmptyRowFormulaValueColumn() {
-        def emptyRow = sheetForFindRowTest.findRowByEmptyCell('A2');
-        assert emptyRow != null
-        assert emptyRow.rowNum == 10 // rowNum start 0
-        assert emptyRow.getCell(0)?.value == null
-    }
-
-    void testFindEmptyRowValueColumn() {
-        def emptyRow = sheetForFindRowTest.findRowByEmptyCell('B3');
-        assert emptyRow != null
-        assert emptyRow.rowNum == 8  // rowNum start 0
-        assert emptyRow.getCell(1)?.value == null
-    }
-
-    void testAddRow() {
-        def emptyRow = sheetForFindRowTest.findRowByEmptyCell('A2');
-        emptyRow.createCell(0).value = "100"
-        emptyRow.createCell(1).value = "test"
-
-        outputFile.withOutputStream { book.write(it) }
-        def targetBook = GExcel.open(outputFile)
-        def targetSheet = targetBook[3]
-        assert targetSheet.A11.value == "100"
-        assert targetSheet.B11.value == "test"
-    }
-
-    void testFindRowByCellValue() {
-        def resultRow = sheetForFindRowTest.findRowByCellValue('F4', 'Ken');
-        assert resultRow != null
-        assert resultRow.label == "7"  // label equals line number on excel
-        assert resultRow.F_.value == "Ken"
-        assert resultRow.getCell(5) == sheetForFindRowTest.F7
-    }
-
-    void testFindRowByCellValuePrefixMatch() {
-        def resultRow = sheetForFindRowTest.findRowByCellValue('C4', 'Add');
-        assert resultRow != null
-        assert resultRow.label == "4"  // label equals line number on excel
-        assert resultRow.C_.value == "Add Feature"
-        assert resultRow.getCell(2) == sheetForFindRowTest.C4
-    }
-
-    void testFindRowByCellValueSuffixMatch() {
-        def resultRow = sheetForFindRowTest.findRowByCellValue('H6', 'ed');
-        assert resultRow != null
-        assert resultRow.label == "6"  // label equals line number on excel
-        assert resultRow.H_.value == "Closed"
-        assert resultRow.getCell(7) == sheetForFindRowTest.H6
-    }
-
-    void testFindRowByCellValueNumberMatch() {
-        def resultRow = sheetForFindRowTest.findRowByCellValue('I4', 20);
-        assert resultRow != null
-        assert resultRow.label == "5"  // label equals line number on excel
-        assert resultRow.I_.value == 20
-        assert resultRow.getCell(8) == sheetForFindRowTest.I5
-    }
-
-    void testFindAllRowsByCellValue() {
-        def resultRows = sheetForFindRowTest.findAllRowsByCellValue('D4', 'B');
-        assert resultRows[0].label == "5"
-        assert resultRows[0].D_.value == "B"
-        assert resultRows[1].label == "6"
-        assert resultRows[1].D_.value == "B"
-    }
-
-    void testFindAllRowsByCellValuePrefixMatch() {
-        def resultRows = sheetForFindRowTest.findAllRowsByCellValue('C4', 'Spec');
-        assert resultRows[0].label == "5"
-        assert resultRows[0].C_.value == "Spec Change"
-        assert resultRows[1].label == "7"
-        assert resultRows[1].C_.value == "Spec Change"
-    }
-
-    void testFindAllRowsByCellValueNumberMatch() {
-        def resultRows = sheetForFindRowTest.findAllRowsByCellValue('I4', 10);
-        assert resultRows[0].label == "7"
-        assert resultRows[0].I_.value == 10
-        assert resultRows[1].label == "8"
-        assert resultRows[1].I_.value == 10
     }
 }
 
