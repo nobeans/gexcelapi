@@ -43,11 +43,11 @@ class GExcel {
                 if (name == "rows") { return rows() }
                 if (name ==~ /_\d+/) { // wildcard for row
                     def row = getRowFromSheetByLabel(delegate, name)
-                    return CellRange.newSequentialCellRange(delegate, row.rowNum, row.getFirstCellNum(), row.rowNum, row.getLastCellNum() - 1)
+                    return CellRange.newSequentialCellRange(delegate, row.rowNum, row.firstCellNum, row.rowNum, row.lastCellNum - 1)
                 }
                 if (name ==~ /[a-zA-Z]+_/) { // wildcard for column
                     int columnIndex = CLU.columnIndex(name)
-                    return CellRange.newSequentialCellRange(delegate, delegate.getFirstRowNum(), columnIndex, delegate.getLastRowNum(), columnIndex)
+                    return CellRange.newSequentialCellRange(delegate, delegate.firstRowNum, columnIndex, delegate.lastRowNum, columnIndex)
                 }
                 if (name ==~ /[a-zA-Z]+\d+/) { // a specified cell
                     def row = getRowFromSheetByLabel(delegate, name)
