@@ -78,7 +78,7 @@ class GExcel {
                 }
                 return null
             }
-            findEmptyRow { label ->
+            findRowByEmptyCell { label ->
                 Row targetRow = delegate.find { Row row ->
                     row.rowNum >= CLU.rowIndex(label) && row.getCell(CLU.columnIndex(label))?.value == null
                 }
@@ -87,13 +87,13 @@ class GExcel {
                 }
                 return targetRow
             }
-            findByCellValue { label, cellValue ->
+            findRowByCellValue { label, cellValue ->
                 def condition = createCondition(label, cellValue)
-                delegate.find(condition)
+                return delegate.find(condition)
             }
-            findAllByCellValue { label, cellValue ->
+            findAllRowsByCellValue { label, cellValue ->
                 def condition = createCondition(label, cellValue)
-                delegate.findAll(condition)
+                return delegate.findAll(condition)
             }
         }
     }
