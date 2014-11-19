@@ -15,6 +15,7 @@
  */
 
 apply plugin: 'groovy'
+apply plugin: AnsiColorConsoleLogPlugin
 
 defaultTasks 'clean', 'build'
 
@@ -22,12 +23,6 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.fusesource.jansi:jansi:1.11'
-    }
     apply from: file('gradle/buildscript.gradle'), to: buildscript
 }
 apply from: file('gradle/bintray.gradle')
@@ -51,68 +46,13 @@ tasks.withType(AbstractCompile) each { it.options.encoding = defaultEncoding }
 tasks.withType(GroovyCompile) each { it.groovyOptions.encoding = defaultEncoding }
 
 // Common configuration for unitTest and integrationTest
-tasks.withType(Test) each {
-    // show standard out and standard error of the test JVM(s) on the console
-    it.testLogging.showStandardStreams = true
+tasks.withType(Test).each {
+    it.testLogging {
+        // show standard out and standard error of the test JVM(s) on the console
+        showStandardStreams = true
 
-    it.beforeTest { desc ->
-        AnsiColor.printlnAsTestResult """ - (${desc.className}) "${desc.name}" => """, true
-        ext.watch = StopWatch.start()
-    }
-    it.afterTest { desc, result ->
-        AnsiColor.printlnAsTestResult "${result.resultType} (${String.format('%.3f', ext.watch.wrap())} sec)"
+        // show the message on failure
+        exceptionFormat "full"
+        events "failed"
     }
 }
-
-//===========================================
-// Helper
-//===========================================
-
-import org.fusesource.jansi.AnsiConsole
-import org.fusesource.jansi.Ansi
-
-class AnsiColor {
-    static init() {
-        AnsiConsole.systemInstall()
-        if (Boolean.valueOf(System.properties['no.color'] ?: false)) {
-            Ansi.enabled = false
-        }
-    }
-
-    static printlnAsInfo(text) {
-        println Ansi.ansi().fg(Ansi.Color.CYAN).a(text).reset()
-    }
-
-    static printlnAsWarn(text) {
-        println Ansi.ansi().fg(Ansi.Color.YELLOW).a(text).reset()
-    }
-
-    static printlnAsError(text) {
-        println Ansi.ansi().fg(Ansi.Color.RED).a(text).reset()
-    }
-
-    static printlnAsTestResult(text, noLF = false) {
-        def message = Ansi.ansi().render(text.replaceAll(/(SUCCESS)/, "@|green \$1|@").replaceAll(/(ERROR|FAILURE|FAILED)/, "@|red \$1|@").replaceAll(/org.jggug.kobo.groovyserv/, 'o.j.k.g'))
-        if (noLF) {
-            print message
-            System.out.flush()
-        } else {
-            println message
-        }
-    }
-}
-
-class StopWatch {
-    def startTime
-
-    static start() { new StopWatch() }
-
-    private StopWatch() {
-        this.startTime = System.currentTimeMillis()
-    }
-
-    def wrap() {
-        (System.currentTimeMillis() - startTime) / 1000
-    }
-}
-
