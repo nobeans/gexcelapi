@@ -1,0 +1,50 @@
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task groovydocJar(type: Jar) {
+    classifier = 'javadoc'
+    from groovydoc
+}
+
+artifacts {
+    archives sourceJar
+    archives groovydocJar
+}
+
+publishing {
+    publications {
+        deployment(MavenPublication) {
+            from components.java
+
+            artifact sourceJar
+            artifact groovydocJar
+        }
+    }
+}
+
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : null
+    key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : null
+    publications = ['deployment']
+    pkg {
+        repo = 'maven'
+        name = 'gexcelapi'
+        desc = 'GExcelAPI is a thin wrapper library powered by Groovy of Apache POI, not JExcelAPI.'
+        websiteUrl = 'https://github.com/nobeans/gexcelapi'
+        issueTrackerUrl = 'https://github.com/nobeans/gexcelapi/issues'
+        vcsUrl = 'https://github.com/nobeans/gexcelapi.git'
+        licenses = ['Apache-2.0']
+        version {
+            name = "${version}"
+            vcsTag = "v${version}"
+        }
+    }
+}
+
+bintrayUpload.dependsOn build
