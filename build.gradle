@@ -37,7 +37,7 @@ configurations {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.1.2'
-    compile 'org.apache.poi:poi-ooxml:3.9'
+    compile 'org.apache.poi:poi-ooxml:3.10.1'
     testCompile 'junit:junit:4.11'
 }
 
