@@ -31,10 +31,6 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    deployerJars
-}
-
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.1.2'
     compile 'org.apache.poi:poi-ooxml:3.10.1'
