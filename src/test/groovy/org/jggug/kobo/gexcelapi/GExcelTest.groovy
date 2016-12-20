@@ -58,8 +58,6 @@ class GExcelTest extends GroovyTestCase {
         assert sheet.A1.value == "Sheet1-A1"
         sheet.A1.value = "MODIFIED"
         assert sheet.A1.value == "MODIFIED"
-        sheet.A1 << "MORE-MODIFIED"
-        assert sheet.A1.value == "MORE-MODIFIED"
 
         assert sheet.B1.value == "B1の内容"
         assert sheet.B2.value == "B2の内容"

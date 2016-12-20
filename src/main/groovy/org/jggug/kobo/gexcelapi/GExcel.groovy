@@ -113,7 +113,6 @@ class GExcel {
                 }
             }
             setValue { value -> delegate.setCellValue(value) }
-            leftShift { value -> delegate.setCellValue(value) }
             asType { Class type ->
                 // explicitly accessing value by appropriate type
                 switch(type) {
